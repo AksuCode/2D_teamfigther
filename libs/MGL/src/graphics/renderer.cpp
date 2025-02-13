@@ -1,4 +1,4 @@
-#include "../include/renderer.hpp"
+#include "../../include/graphics/renderer.hpp"
 
 Renderer::Renderer(SDL_Window * window_ptr) {
     renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);

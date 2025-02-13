@@ -1,4 +1,4 @@
-#include "../include/window.hpp"
+#include "../../include/graphics/window.hpp"
 
 Window::Window(): window_(nullptr), window_width_(0), window_heigth_(0), window_renderer_(nullptr) {}
 
@@ -10,6 +10,8 @@ Window::~Window() {
 int Window::getWindowWidth() { return window_width_; }
 
 int Window::getWindowHeigth() { return window_heigth_; }
+
+Renderer * getRenderer() { return window_renderer_; }
 
 int Window::createOrUpdateWindow(bool full_screen, int window_width, int window_heigth) {
   if (window_ == nullptr) {
@@ -31,7 +33,7 @@ int Window::createOrUpdateWindow(bool full_screen, int window_width, int window_
   SDL_GetWindowSize(window_, &window_width_, &window_heigth_);
 
   // Create renderer
-  window_renderer_ = new Renderer();
+  window_renderer_ = new Renderer(window_);
 
   return 0;
 }

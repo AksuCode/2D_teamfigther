@@ -18,6 +18,8 @@ class Window {
 
     int getWindowHeigth();
 
+    Renderer * getRenderer();
+
     /*
     * Creates a custom size window.
     * Parameters:

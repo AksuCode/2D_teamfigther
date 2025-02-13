@@ -3,17 +3,20 @@
 
 #include <SDL2/SDL.h>
 
-#include "window.hpp"
-#include "inputhandler.hpp"
+#include "event_handler.hpp"
+
+#include "graphics.hpp"
 
 class Game {
     public:
-        Game(SDL_LogOutputFunction sdl_logOFunction);
+        Game(SDL_LogOutputFunction sdl_logOutputFunction);
         ~Game();
+        void gameLoop();
 
     private:
-        Window * game_window_;
+        EventHandler * game_eventhandler_;
         InputHandler * game_inputhandler_;
+        Graphics * game_graphics_;
 };
 
 #endif
