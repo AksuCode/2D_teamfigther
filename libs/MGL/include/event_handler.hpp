@@ -16,20 +16,20 @@ class EventHandler {
         std::string getTextInput();
         void stopReceiveTextInput();
         
-        Uint8 getKeyboardState();
+        Uint8 * getKeyboardState();
 
-        std::pair<int, int> getMousePosition();
+        std::pair<int, int> & getMousePosition();
 
-        Uint32 getMouseKeyState();
+        Uint32 & getMouseKeyState();
 
     private:
         SDL_Event event_;
         std::string text_input_;
-
-        const Uint8 * keyboard_state_; 
-        int mouse_pos_x_;
-        int mouse_pos_y_;
+        
+        Uint8 * keyboard_state_; 
+        std::pair<int, int> mouse_position_;
         Uint32 mouse_key_state_;
+
 };
 
 #endif

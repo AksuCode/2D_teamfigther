@@ -14,7 +14,7 @@ void EventHandler::pollEvent() {
                 text_input_ += event_.text.text;
     }
     
-    mouse_key_state_ = SDL_GetMouseState(&mouse_pos_x_, &mouse_pos_y_);
+    mouse_key_state_ = SDL_GetMouseState(&mouse_position_.first, &mouse_position_.second);
 }
 
 void EventHandler::receiveTextInput() {
@@ -28,17 +28,17 @@ std::string EventHandler::getTextInput() {
 }
 
 void EventHandler::stopReceiveTextInput() {
-    SDL_StopTextInput()
+    SDL_StopTextInput();
 }
 
-Uint8 EventHandler::getKeyboardState() {
-  return *keyboard_state_;
+Uint8 *EventHandler::getKeyboardState() {
+  return keyboard_state_;
 }
 
-std::pair<int, int> EventHandler::getMousePosition() {
-  return std::pair(mouse_pos_x_, mouse_pos_y_);
+std::pair<int, int> & EventHandler::getMousePosition() {
+  return mouse_position_;
 }
 
-Uint32 EventHandler::getMouseKeyState() {
+Uint32 & EventHandler::getMouseKeyState() {
   return mouse_key_state_;
 }

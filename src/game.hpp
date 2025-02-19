@@ -1,11 +1,11 @@
-#ifndef MGL_GAME_HPP
-#define MGL_GAME_HPP
+#ifndef GAME_HPP
+#define GAME_HPP
 
 #include <SDL2/SDL.h>
 
-#include "event_handler.hpp"
-
-#include "graphics.hpp"
+#include "MGL/include/event_handler.hpp"
+#include "MGL/include/action.hpp"
+#include "MGL/include/graphics.hpp"
 
 class Game {
     public:
@@ -15,7 +15,7 @@ class Game {
 
     private:
         EventHandler * game_eventhandler_;
-        InputHandler * game_inputhandler_;
+        Action * game_action_;
         Graphics * game_graphics_;
 };
 
