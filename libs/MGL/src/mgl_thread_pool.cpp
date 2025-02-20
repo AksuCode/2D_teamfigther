@@ -54,6 +54,8 @@ const int & MGL_ThreadPool::getPoolSize() {
     return num_threads_;
 }
 
+/* MAYBE THIS SHOULD ALSO REQUIRE SYNCHRONIZATION??? NOT JUST THAT STRAIGHTFORWARD.
 int MGL_ThreadPool::getTaskQueueLength() {
     return task_queue_.size();
 }
+*/

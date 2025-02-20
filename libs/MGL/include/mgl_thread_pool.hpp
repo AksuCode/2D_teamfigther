@@ -15,7 +15,7 @@ class MGL_ThreadPool {
         ~MGL_ThreadPool();
         void executeConcurrentTask(std::function<void()> task);
         const int & getPoolSize();
-        int getTaskQueueLength();
+        //int getTaskQueueLength(); MAYBE THIS SHOULD ALSO REQUIRE SYNCHRONIZATION??? NOT JUST THAT STRAIGHTFORWARD.
     private:
         const int num_threads_;
         std::vector<std::thread> thread_pool_;
