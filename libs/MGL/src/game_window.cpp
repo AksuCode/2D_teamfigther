@@ -12,6 +12,10 @@ int GameWindow::getWindowWidth() { return window_width_; }
 int GameWindow::getWindowHeigth() { return window_heigth_; }
 
 int GameWindow::createOrUpdateWindow(bool full_screen, int window_width, int window_heigth) {
+  if (renderer_ != nullptr) {
+    SDL_DestroyRenderer(renderer_);
+  }
+
   if (window_ == nullptr) {
     if (full_screen) {
       createWindow(window_width, window_heigth, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
@@ -30,8 +34,7 @@ int GameWindow::createOrUpdateWindow(bool full_screen, int window_width, int win
   }
   SDL_GetWindowSize(window_, &window_width_, &window_heigth_);
 
-  // Create renderer
-  renderer_ = new createRenderer(window_);
+  GameWindow::createRenderer(window_);
 
   return 0;
 }
@@ -51,7 +54,7 @@ void GameWindow::createWindow(int width, int heigth, uint32_t flags) {
 }
 
 void GameWindow::createRenderer(SDL_Window * window_ptr) {
-    renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    renderer_ = new SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (renderer_ == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
         exit(-1);
