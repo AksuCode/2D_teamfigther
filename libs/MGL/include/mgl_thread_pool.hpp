@@ -4,6 +4,7 @@
 #include <thread>
 #include <vector>
 #include <mutex>
+#include <algorithm>
 #include <queue>
 #include <functional>
 #include <condition_variable>
@@ -15,10 +16,11 @@ class MGL_ThreadPool {
         ~MGL_ThreadPool();
         void executeConcurrentTask(std::function<void()> task);
         const int & getPoolSize();
-        //int getTaskQueueLength(); MAYBE THIS SHOULD ALSO REQUIRE SYNCHRONIZATION??? NOT JUST THAT STRAIGHTFORWARD.
+        int awaitAllTaskAndThreadCompletion(int timeout_ms);
     private:
         const int num_threads_;
         std::vector<std::thread> thread_pool_;
+        std::vector<bool> free_threads_;
         std::mutex task_queue_mutex_;
         std::condition_variable cv_;
         std::queue<std::function<void()>> task_queue_;

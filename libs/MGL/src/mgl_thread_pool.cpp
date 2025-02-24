@@ -2,7 +2,9 @@
 
 MGL_ThreadPool::MGL_ThreadPool(int num_threads) : num_threads_(num_threads) {
     for (int i = 0; i < num_threads_; i++) {
-        thread_pool_.emplace_back([this] {
+        free_threads_.push_back(true);
+        thread_pool_.emplace_back([i, this] {
+            const int thread_number = i;
             while(true) {
                 std::function<void()> task;
 
@@ -16,11 +18,15 @@ MGL_ThreadPool::MGL_ThreadPool(int num_threads) : num_threads_(num_threads) {
                         return;
                     }
 
+                    free_threads_[thread_number] = false;
+
                     task = std::move(task_queue_.front());
                     task_queue_.pop();
                 } // Unlocked here
 
                 task();
+
+                free_threads_[thread_number] = true;
             }
         });
     }
@@ -54,8 +60,15 @@ const int & MGL_ThreadPool::getPoolSize() {
     return num_threads_;
 }
 
-/* MAYBE THIS SHOULD ALSO REQUIRE SYNCHRONIZATION??? NOT JUST THAT STRAIGHTFORWARD.
-int MGL_ThreadPool::getTaskQueueLength() {
-    return task_queue_.size();
+// Might take too much CPU due to busy waiting. Should be switched to something better.
+int MGL_ThreadPool::awaitAllTaskAndThreadCompletion(int timeout_ms) {
+    auto timeout_duration = std::chrono::milliseconds(timeout_ms);
+    std::chrono::time_point begin_tp = std::chrono::steady_clock::now();
+
+    while (!(task_queue_.empty() && std::all_of(free_threads_.begin(), free_threads_.end(), [](bool b) { return b; }))) {
+        if ((std::chrono::steady_clock::now() - begin_tp) >= timeout_duration) {return -1;}
+        std::this_thread::yield();
+    }
+
+    return 0;
 }
-*/
