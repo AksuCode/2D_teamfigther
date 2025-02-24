@@ -21,8 +21,10 @@ class MGL_ThreadPool {
         const int num_threads_;
         std::vector<std::thread> thread_pool_;
         std::vector<bool> free_threads_;
+        std::mutex free_threads_mutex_;
+        std::condition_variable free_threads_cv_;
         std::mutex task_queue_mutex_;
-        std::condition_variable cv_;
+        std::condition_variable await_task_cv_;
         std::queue<std::function<void()>> task_queue_;
         bool quit_ = false;
 };
