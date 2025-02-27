@@ -1,7 +1,7 @@
-#ifndef AOE_EFFECT_HPP
-#define AOE_EFFECT_HPP
+#ifndef AOE_HPP
+#define AOE_HPP
 
-class AoeEffect {
+class Aoe {
     public:
     private:
         unsigned short current_action_duration_tick_count_;
