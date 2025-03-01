@@ -93,19 +93,34 @@ int GameWindow::drawRectangle(Uint8 r, Uint8 g, Uint8 b, Uint8 t, int x, int y, 
   return 0;
 }
 
-int GameWindow::renderTexture(SDL_Texture * texture_,
+int GameWindow::renderTexture(SDL_Texture * texture,
                   const SDL_Rect * src_rect,
                   const SDL_Rect * dst_rect) {
-  return SDL_RenderCopy(renderer_, texture_, src_rect, dst_rect);
+  return SDL_RenderCopy(renderer_, texture, src_rect, dst_rect);
 }
 
-int GameWindow::renderTextureEx(SDL_Texture * texture_,
+int GameWindow::renderTextureEx(SDL_Texture * texture,
                   const SDL_Rect * src_rect,
                   const SDL_Rect * dst_rect,
                   const double angle,
                   const SDL_Point *center,
                   const SDL_RendererFlip flip) {
-  return SDL_RenderCopyEx(renderer_, texture_, src_rect, dst_rect, angle, center, flip);
+  return SDL_RenderCopyEx(renderer_, texture, src_rect, dst_rect, angle, center, flip);
+}
+
+int GameWindow::renderTextureF(SDL_Texture * texture,
+                  const SDL_Rect * src_rect,
+                  const SDL_FRect * dst_rect) {
+  return SDL_RenderCopyF(renderer_, texture, src_rect, dst_rect);
+}
+
+int GameWindow::renderTextureExF(SDL_Texture * texture,
+                  const SDL_Rect * src_rect,
+                  const SDL_FRect * dst_rect,
+                  const double angle,
+                  const SDL_Point *center,
+                  const SDL_RendererFlip flip) {
+  return SDL_RenderCopyExF(renderer_, texture, src_rect, dst_rect, angle, center, flip);
 }
 
 void GameWindow::updateWindow() {

@@ -24,7 +24,7 @@ int SpriteSheet::refresh() {
     return load();
 }
 
-Sprite_s SpriteSheet::getSpriteSheet() {
+SpriteSheet::Sprite_s SpriteSheet::getSpriteSheet() {
     return (Sprite_s) surface_;
 }
 

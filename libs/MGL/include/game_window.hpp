@@ -53,13 +53,24 @@ class GameWindow {
     */
     int drawRectangle(Uint8 r, Uint8 g, Uint8 b, Uint8 t, int x, int y, int w, int h);
 
-    int GameWindow::renderTexture(SDL_Texture * texture_,
+    int renderTexture(SDL_Texture * texture,
                   const SDL_Rect * src_rect,
                   const SDL_Rect * dst_rect);
 
-    int renderTextureEx(SDL_Texture * texture_,
+    int renderTextureEx(SDL_Texture * texture,
                       const SDL_Rect * src_rect,
                       const SDL_Rect * dst_rect,
+                      const double angle,
+                      const SDL_Point *center,
+                      const SDL_RendererFlip flip);
+
+    int renderTextureF(SDL_Texture * texture,
+                  const SDL_Rect * src_rect,
+                  const SDL_FRect * dst_rect);
+
+    int renderTextureExF(SDL_Texture * texture,
+                      const SDL_Rect * src_rect,
+                      const SDL_FRect * dst_rect,
                       const double angle,
                       const SDL_Point *center,
                       const SDL_RendererFlip flip);
@@ -74,7 +85,6 @@ class GameWindow {
     int window_width_;
     int window_heigth_;
     SDL_Renderer *renderer_;
-    std::mutex renderer_mutex_;
 
     /*
     * Creates a window. Terminates program on failure.
