@@ -7,7 +7,7 @@ SpriteRender::SpriteRender(const GameWindow * gw, const std::pair<int, int> spri
 
 SpriteRender::~SpriteRender() {
     loaded_ = false;
-    SDL_DestroyTexture(texture_);
+    if (texture_ != nullptr) {SDL_DestroyTexture(texture_);}
 }
 
 int SpriteRender::load(SpriteSheet::Sprite_s sprite_sheet) {
@@ -19,11 +19,12 @@ int SpriteRender::load(SpriteSheet::Sprite_s sprite_sheet) {
 
 void SpriteRender::unload() {
     loaded_ = false;
+    if (texture_ == nullptr) {return;}
     SDL_DestroyTexture(texture_);
 }
 
 int SpriteRender::setSpriteTransparency(Uint8 transparency) {
-    if (SDL_SetTextureBlendMode(texture_, SDL_BLENDMODE_BLEND) < 0) {return -1}
+    if (SDL_SetTextureBlendMode(texture_, SDL_BLENDMODE_BLEND) < 0) {return -1;}
     return SDL_SetTextureAlphaMod(texture_, transparency);
 }
 

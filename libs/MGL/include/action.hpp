@@ -7,7 +7,7 @@ class Action {
     public:
         const enum class ActionCode {
             LEFT,
-            RIGT,
+            RIGHT,
             UP,
             DOWN,
             USE,

@@ -4,7 +4,7 @@
 class Actor {
     public:
     private:
-        unsigned short current_action_duration_tick_count_;
+        int health_point_;
 };
 
 #endif

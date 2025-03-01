@@ -9,7 +9,7 @@ SpriteSheet::~SpriteSheet() {
 
 int SpriteSheet::load() {
     surface_ = SDL_LoadBMP(bmp_path_);
-    if (surface_ == NULL) return -1;
+    if (surface_ == NULL) {return -1;}
     loaded_ = true;
     return 0;
 }
