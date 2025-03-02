@@ -17,18 +17,16 @@ class ActorRender {
         bool spriteRenderLoaded();
         //
 
-        void setAction(int action);
-        void setDestination(const std::pair<int, int> & destination_position);
+        std::pair<int, int> getSpriteDimensions();
+        void renderActor(int action, int & action_sprite_counter, std::pair<int, int> destination_position, float scaling);
 
     private:
        SpriteSheet * ss_;
        bool ss_loaded_;
        SpriteRender * sr_;
        bool sr_loaded_;
-       int action_;
-       int action_sprite_counter_;
-       float scaling_;
-       std::pair<int, int> destination_position_;
+       int sprite_amount_per_action_mapping_[];
+       std::pair<int, int> sprite_dimensions_;
 };
 
 #endif
