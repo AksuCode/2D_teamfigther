@@ -1,8 +1,6 @@
 #ifndef WIZARD_RENDER_HPP
 #define WIZARD_RENDER_HPP
 
-#include <utility>
-
 #include "MGL/include/sprite_render.hpp"
 
 #include "../../actor_render.hpp"

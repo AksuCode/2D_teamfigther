@@ -14,13 +14,18 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
 
     game_eventhandler_ = new EventHandler();
     game_action_ = new Action();
-    game_graphics_ = new Graphics();
+    game_window_ = new GameWindow();
+
+    world_ = new World(game_window_);
+    world_render_ = new WorldRender();
 }
 
 Game::~Game() {
     delete game_eventhandler_;
     delete game_action_;
-    delete game_graphics_;
+    delete game_window_ ;
+    delete world_;
+    delete render_world_;
     SDL_Quit();
 }
 
@@ -36,10 +41,10 @@ void Game::gameLoop() {
         // 2. External input converted to player actions that create a cause to the world
         // Turn inputs to player actions with player actions class which in turn somewhow changes player state
         // Maybe pass reference to player actions object to gamestate class ro something
-        std::vector<int>  current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
+        std::vector<int> current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
         std::pair<int, int> current_mouse_position = game_eventhandler_->getMousePosition();
 
-        
+        world_render_->renderWorld();
         //
 
         // 3. Other actors do their actions that also create a cause

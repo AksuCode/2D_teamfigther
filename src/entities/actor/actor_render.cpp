@@ -2,6 +2,12 @@
 
 ActorRender::ActorRender() : ss_(nullptr), ss_loaded_(false), sr_(nullptr), sr_loaded_(false), sprite_amount_per_action_mapping_(nullptr), sprite_dimensions_({0, 0}) {}
 
+ActorRender::~ActorRender() {
+    if (sprite_amount_per_action_mapping_ != nullptr) {
+        delete sprite_amount_per_action_mapping_;
+    }
+}
+
 void ActorRender::loadSpriteSheet() {
     if (ss_ == nullptr) {
         ss_loaded_ = false;

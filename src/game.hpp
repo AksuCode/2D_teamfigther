@@ -5,7 +5,10 @@
 
 #include "MGL/include/event_handler.hpp"
 #include "MGL/include/action.hpp"
-#include "MGL/include/graphics.hpp"
+#include "MGL/include/game_window.hpp"
+
+#include "./world.hpp"
+#include "./world_render.hpp"
 
 class Game {
     public:
@@ -16,7 +19,10 @@ class Game {
     private:
         EventHandler * game_eventhandler_;
         Action * game_action_;
-        Graphics * game_graphics_;
+        GameWindow * game_window_;
+
+        World * world_;
+        WorldRender * world_render_;
 };
 
 #endif

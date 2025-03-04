@@ -7,7 +7,7 @@ WizardRender::WizardRender(const GameWindow * gw, const char * bmp_path = "./ass
     /***************************************************************/
 
     // Map the amount of sprites per action from the sprite sheet.
-    sprite_amount_per_action_mapping_ = {
+    sprite_amount_per_action_mapping_ = new int[4]{
         1,
         1,
         1,
@@ -21,7 +21,7 @@ WizardRender::WizardRender(const GameWindow * gw, const char * bmp_path = "./ass
     /***************************************************************/
 
     ss_ = new SpriteSheet(bmp_path);
-    sr_ = new SpriteRender(gw, sprite_dimensions);
+    sr_ = new SpriteRender(gw, sprite_dimensions_);
     if (ss_ == nullptr || sr_ == nullptr) {exit(-1);}
 }
 
