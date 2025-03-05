@@ -8,6 +8,7 @@
 class ActorRender {
     public:
         ActorRender();
+        ~ActorRender();
 
         // Loading
         void loadSpriteSheet();
