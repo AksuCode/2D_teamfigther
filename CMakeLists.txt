@@ -1,5 +1,5 @@
 # Project name
-project(game_of_life)
+project(2D_team_fighter)
 
 # Set cmake minimum version
 cmake_minimum_required(VERSION 3.15)
