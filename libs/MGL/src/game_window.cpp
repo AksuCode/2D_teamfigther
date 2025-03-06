@@ -54,11 +54,11 @@ void GameWindow::createWindow(int width, int heigth, uint32_t flags) {
 }
 
 void GameWindow::createRenderer(SDL_Window * window_ptr) {
-  renderer_ = new SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+  renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
   if (renderer_ == NULL) {
       SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
   } else {
-    renderer_ = new SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_SOFTWARE);
+    renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_SOFTWARE);
     if (renderer_ == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
         exit(-1);
@@ -118,11 +118,15 @@ int GameWindow::renderTextureExF(SDL_Texture * texture,
                   const SDL_Rect * src_rect,
                   const SDL_FRect * dst_rect,
                   const double angle,
-                  const SDL_Point *center,
+                  const SDL_FPoint *center,
                   const SDL_RendererFlip flip) {
   return SDL_RenderCopyExF(renderer_, texture, src_rect, dst_rect, angle, center, flip);
 }
 
 void GameWindow::updateWindow() {
   SDL_RenderPresent(renderer_);
+}
+
+const GameWindow::GW_Renderer GameWindow::getRenderer() {
+  return renderer_;
 }

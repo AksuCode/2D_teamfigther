@@ -1,6 +1,6 @@
 #include "./wizard_render.hpp"
 
-WizardRender::WizardRender(const GameWindow * gw, const char * bmp_path = "./assets/sprites/wizard/default.bmp") {
+WizardRender::WizardRender(GameWindow * gw, const char * bmp_path = "./assets/sprites/wizard/default.bmp") {
 
     /***************************************************************/
     // HARDCODE SPRITESHEET SPECIFICATIONS. SPECIFIC TO THIS ACTOR //

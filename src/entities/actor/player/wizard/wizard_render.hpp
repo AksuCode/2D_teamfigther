@@ -5,9 +5,9 @@
 
 #include "../../actor_render.hpp"
 
-class WizardRender : ActorRender {
+class WizardRender : public ActorRender {
     public:
-        WizardRender(const GameWindow * gw, const char * bmp_path);
+        WizardRender(GameWindow * gw, const char * bmp_path);
         ~WizardRender();
 };
 

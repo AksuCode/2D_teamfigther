@@ -72,13 +72,16 @@ class GameWindow {
                       const SDL_Rect * src_rect,
                       const SDL_FRect * dst_rect,
                       const double angle,
-                      const SDL_Point *center,
+                      const SDL_FPoint *center,
                       const SDL_RendererFlip flip);
 
     /*
     * Update the window with the present renderer.
     */
     void updateWindow();
+
+    typedef SDL_Renderer* GW_Renderer;
+    const GW_Renderer getRenderer();
 
   private:
     SDL_Window *window_;

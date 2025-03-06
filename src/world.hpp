@@ -10,7 +10,7 @@ class World {
         World();
         ~World();
     private:
-        Actor * main_player_;
+        Wizard * main_player_;
 };
 
 #endif

@@ -1,6 +1,3 @@
-#include "MGL/include/window.hpp"
-#include "MGL/include/gamestatehandler.hpp"
-
 #include "./game.hpp"
 
 void gameLoop() {
@@ -10,7 +7,7 @@ void gameLoop() {
 }
 
 int main(int argc, char *argv[]) {
-  game = new Game();
+  Game * game = new Game(NULL);
   game->gameLoop();
   return 0;
 }

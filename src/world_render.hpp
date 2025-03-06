@@ -19,7 +19,7 @@ class WorldRender {
         GameWindow * game_window_;
         WizardRender * wr_;
 
-        void renderActor(ActorRender * actor_render, std::pair<int, int> destination_position, float scaling);
+        void renderW(WizardRender * w_render, std::pair<int, int> destination_position, float scaling);
 };
 
 #endif

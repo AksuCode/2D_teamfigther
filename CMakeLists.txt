@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 # Remove main_wasm.cpp from the list.
-list(REMOVE_ITEM SRC_FILES "${CMAKE_SOURCE_DIR}/src/main_wasm.cpp")
+list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/src/main_wasm.cpp")
 
 # Create the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})

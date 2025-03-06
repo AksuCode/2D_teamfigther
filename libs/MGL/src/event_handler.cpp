@@ -31,7 +31,7 @@ void EventHandler::stopReceiveTextInput() {
     SDL_StopTextInput();
 }
 
-Uint8 *EventHandler::getKeyboardState() {
+const Uint8 *EventHandler::getKeyboardState() {
   return keyboard_state_;
 }
 

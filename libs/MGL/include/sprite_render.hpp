@@ -15,7 +15,7 @@ class SpriteRender {
         // SDL_SetTextureColorMod
 
         
-        SpriteRender(const GameWindow * gw, std::pair<int, int> sprite_dimensions);
+        SpriteRender(GameWindow * gw, std::pair<int, int> sprite_dimensions);
         ~SpriteRender();
         int load(SpriteSheet::Sprite_s sprite_sheet);
         void unload();
@@ -82,9 +82,10 @@ class SpriteRender {
                 const int & flip);
 
     private:
-        const GameWindow * gw_;
+        GameWindow * gw_;
         const std::pair<int, int> sprite_dimensions_;
-        const SDL_Point sprite_center_point_;
+        SDL_Point sprite_center_point_;
+        SDL_FPoint sprite_center_fpoint_;
         SDL_Texture * texture_;
         bool loaded_;
         SDL_Rect src_rect_;
