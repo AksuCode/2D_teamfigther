@@ -7,7 +7,7 @@
 
 class WizardRender : public ActorRender {
     public:
-        WizardRender(GameWindow * gw, const char * bmp_path);
+        WizardRender(GameWindow * gw, const char bmp_path[]  = "./assets/sprites/wizard/default.bmp");
         ~WizardRender();
 };
 

@@ -31,6 +31,11 @@ Game::~Game() {
 
 void Game::gameLoop() {
 
+    game_window_->createOrUpdateWindow(false, 1000, 1000);
+
+    world_render_->loadWorld();
+    std::cout << "WORLD LOADED!!!" << std::endl;
+
     while (true) {
         // 1. system takes external input
         game_eventhandler_->pollEvent();
@@ -44,7 +49,6 @@ void Game::gameLoop() {
         auto current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
         std::pair<int, int> current_mouse_position = game_eventhandler_->getMousePosition();
 
-        world_render_->renderWorld();
         //
 
         // 3. Other actors do their actions that also create a cause
@@ -56,7 +60,8 @@ void Game::gameLoop() {
         //
 
         // 5. World state is rendered as image + animations (actions in effect)
-
+        world_render_->renderWorld();
+        game_window_->updateWindow();
         // 
     }
 

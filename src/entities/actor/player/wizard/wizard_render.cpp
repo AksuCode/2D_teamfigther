@@ -1,6 +1,6 @@
 #include "./wizard_render.hpp"
 
-WizardRender::WizardRender(GameWindow * gw, const char * bmp_path = "./assets/sprites/wizard/default.bmp") {
+WizardRender::WizardRender(GameWindow * gw, const char bmp_path[]) {
 
     /***************************************************************/
     // HARDCODE SPRITESHEET SPECIFICATIONS. SPECIFIC TO THIS ACTOR //
@@ -19,6 +19,8 @@ WizardRender::WizardRender(GameWindow * gw, const char * bmp_path = "./assets/sp
 
     /***************************************************************/
     /***************************************************************/
+
+    assert((bmp_path != nullptr) && "bmp_path should be a valid c-string.");
 
     ss_ = new SpriteSheet(bmp_path);
     sr_ = new SpriteRender(gw, sprite_dimensions_);

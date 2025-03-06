@@ -55,15 +55,13 @@ void GameWindow::createWindow(int width, int heigth, uint32_t flags) {
 
 void GameWindow::createRenderer(SDL_Window * window_ptr) {
   renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-  if (renderer_ == NULL) {
-      SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
-  } else {
-    renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_SOFTWARE);
-    if (renderer_ == NULL) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
-        exit(-1);
-    }
-  }
+  if (renderer_ != NULL) { return; }
+  SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
+
+  renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_SOFTWARE);
+  if (renderer_ != NULL) { return; }
+  SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
+  exit(-1);
 }
 
 int GameWindow::clearRenderer(Uint8 r, Uint8 g, Uint8 b, Uint8 t) {

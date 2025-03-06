@@ -9,6 +9,7 @@ ActorRender::~ActorRender() {
 }
 
 void ActorRender::loadSpriteSheet() {
+    assert((ss_ != nullptr) && "ss_ should be a valid pointer by subclass constructor.");
     if (ss_ == nullptr) {
         ss_loaded_ = false;
         return;
@@ -21,11 +22,13 @@ void ActorRender::loadSpriteSheet() {
 }
 
 void ActorRender::unloadSpriteSheet() {
+    assert((ss_ != nullptr) && "ss_ should be a valid pointer by subclass constructor.");
     ss_->unload();
     ss_loaded_ = false;
 }
 
 void ActorRender::loadSpriteRender() {
+    assert((sr_ != nullptr) && "sr_ should be a valid pointer by subclass constructor.");
     if (sr_ == nullptr) {
         sr_loaded_ = false;
         return;
@@ -38,6 +41,7 @@ void ActorRender::loadSpriteRender() {
 }
 
 void ActorRender::unloadSpriteRender() {
+    assert((sr_ != nullptr) && "sr_ should be a valid pointer by subclass constructor.");
     sr_->unload();
     sr_loaded_ = false;
 }
@@ -54,13 +58,15 @@ std::pair<int, int> ActorRender::getSpriteDimensions() {
     return sprite_dimensions_;
 }
 
-void ActorRender::renderActor(int action, int & action_sprite_counter, std::pair<int, int> destination_position, float scaling = 1.0f) {
+int ActorRender::renderActor(int action, int & action_sprite_counter, std::pair<int, int> destination_position, float scaling = 1.0f) {
+
+    assert((sr_ != nullptr) && "sr_ should be a valid pointer by subclass constructor.");
+
     if (action_sprite_counter >= sprite_amount_per_action_mapping_[action]) {
         action_sprite_counter = 0;
     }
 
     const std::pair<int, int> sprite_index = {action, action_sprite_counter};
-    sr_->renderSpriteScaled(sprite_index, destination_position, scaling);
-
     action_sprite_counter += 1;
+    return sr_->renderSpriteScaled(sprite_index, destination_position, scaling);
 }

@@ -6,12 +6,13 @@ EventHandler::EventHandler() {
 
 void EventHandler::pollEvent() {
     while (SDL_PollEvent(&event_)) {
-        switch (event_.type)
+        switch (event_.type) {
             case (SDL_QUIT):
-                // Not implemented
-            
+                exit(0);
+                
             case (SDL_TEXTINPUT):
                 text_input_ += event_.text.text;
+        }
     }
     
     mouse_key_state_ = SDL_GetMouseState(&mouse_position_.first, &mouse_position_.second);

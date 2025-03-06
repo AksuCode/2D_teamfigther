@@ -1,6 +1,8 @@
 #ifndef ACTOR_RENDER_HPP
 #define ACTOR_RENDER_HPP
 
+#include "../../config.hpp"
+
 #include <utility>
 
 #include "MGL/include/sprite_render.hpp"
@@ -21,7 +23,7 @@ class ActorRender {
         //
 
         std::pair<int, int> getSpriteDimensions();
-        void renderActor(int action, int & action_sprite_counter, std::pair<int, int> destination_position, float scaling);
+        int renderActor(int action, int & action_sprite_counter, std::pair<int, int> destination_position, float scaling);
 
     protected:
        SpriteSheet * ss_;

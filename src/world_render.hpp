@@ -14,6 +14,7 @@ class WorldRender {
         WorldRender(GameWindow * game_window);
         ~WorldRender();
         void renderWorld();
+        void loadWorld();
 
     private:
         GameWindow * game_window_;

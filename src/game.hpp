@@ -1,6 +1,8 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include <iostream>
+
 #include <SDL2/SDL.h>
 
 #include "MGL/include/event_handler.hpp"
