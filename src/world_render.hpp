@@ -18,7 +18,9 @@ class WorldRender {
 
     private:
         GameWindow * game_window_;
+
         WizardRender * wr_;
+        int wr_action_counter = 0;
 
         void renderW(WizardRender * w_render, std::pair<int, int> destination_position, float scaling);
 };

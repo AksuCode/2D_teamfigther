@@ -8,6 +8,7 @@
 #include "MGL/include/event_handler.hpp"
 #include "MGL/include/action.hpp"
 #include "MGL/include/game_window.hpp"
+#include "MGL/include/mgl_time.hpp"
 
 #include "./world.hpp"
 #include "./world_render.hpp"

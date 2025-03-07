@@ -9,12 +9,11 @@ WorldRender::~WorldRender() {
 }
 
 void WorldRender::renderW(WizardRender * w_render, std::pair<int, int> destination_position, float scaling) {
-    int tmp = 1;
-    w_render->renderActor(0, tmp, destination_position, scaling);
+    w_render->renderActor(0, wr_action_counter, destination_position, scaling);
 }
 
 void WorldRender::renderWorld() {
-    renderW(wr_, {0,0}, 1.0f);
+    renderW(wr_, {500, 500}, 1.0f);
 }
 
 void WorldRender::loadWorld() {

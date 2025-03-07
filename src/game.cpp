@@ -31,17 +31,21 @@ Game::~Game() {
 
 void Game::gameLoop() {
 
+    // Jotain kivaa.
+    MGL_SchedulerMs * animation_sheduler = new MGL_SchedulerMs(1000);
+    //
+
     game_window_->createOrUpdateWindow(false, 1000, 1000);
 
     world_render_->loadWorld();
-    std::cout << "WORLD LOADED!!!" << std::endl;
 
     while (true) {
+
+        // Steps 1 - 4 get evaluated at the beginnig of a chosen tick timer. But ignored until next game tick.
+
         // 1. system takes external input
         game_eventhandler_->pollEvent();
         //
-
-        // Steps 2 - 4 get evaluated at the beginnig of a chosen tick timer. But ignored until next game tick.
 
         // 2. External input converted to player actions that create a cause to the world
         // Turn inputs to player actions with player actions class which in turn somewhow changes player state
@@ -60,8 +64,10 @@ void Game::gameLoop() {
         //
 
         // 5. World state is rendered as image + animations (actions in effect)
-        world_render_->renderWorld();
-        game_window_->updateWindow();
+        if (animation_sheduler->executeOnSchedule()) {
+            world_render_->renderWorld();
+            game_window_->updateWindow();
+        }
         // 
     }
 
