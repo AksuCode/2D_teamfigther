@@ -32,7 +32,7 @@ Game::~Game() {
 void Game::gameLoop() {
 
     // Jotain kivaa.
-    MGL_SchedulerMs * animation_sheduler = new MGL_SchedulerMs(1000);
+    MGL_SchedulerMs * animation_scheduler = new MGL_SchedulerMs(1000);
     //
 
     game_window_->createOrUpdateWindow(false, 1000, 1000);
@@ -64,7 +64,7 @@ void Game::gameLoop() {
         //
 
         // 5. World state is rendered as image + animations (actions in effect)
-        if (animation_sheduler->executeOnSchedule()) {
+        if (animation_scheduler->executeOnSchedule()) {
             world_render_->renderWorld();
             game_window_->updateWindow();
         }

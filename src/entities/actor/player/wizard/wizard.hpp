@@ -1,9 +1,9 @@
 #ifndef WIZARD_HPP
 #define WIZARD_HPP
 
-#include "../player.hpp"
+#include "../../actor.hpp"
 
-class Wizard : Player {
+class Wizard : Actor {
     public:
     private:
 };

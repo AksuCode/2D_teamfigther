@@ -5,36 +5,42 @@
 
 class Actor {
     public:
-        
+        const std::pair<double, double> & getPosition();
+        const std::pair<double, double> & getVelocity();
+        const std::pair<double, double> & getAcceleration();
+        const std::pair<double, double> & getHitbox();
+        void setPosition(const std::pair<double, double> & position);
+        void setVelocity(const std::pair<double, double> & velocity);
     private:
+        unsigned short int actor_id_;
+        unsigned short int actor_model_;
+
         /****************************************************************/
-        //                         WORLD VARIABLES                      //
+        //                       PHYSICS VARIABLES                      //
         /****************************************************************/
-        std::pair<float, float> position_;
-        std::pair<float, float> velocity_;
-        std::pair<float, float> acceleration_;
+        // (x, y)
+        std::pair<double, double> position_;
+        std::pair<double, double> velocity_;
+        std::pair<double, double> acceleration_;
+        unsigned int weigth_;
         /****************************************************************/
         /****************************************************************/
 
         /****************************************************************/
-        //                 PHYSICAL INITIAL CONSTANT STATS              //
+        //                       PHYSICS CONSTANTS                      //
         /****************************************************************/
-        /*
-        const unsigned int weigth_;
-        const unsigned int strength_;
-        const std::pair<float, float> max_velocity_;
-        const std::pair<float, float> max_acceleration_;
-        */
+        std::pair<double, double> hit_box_;  // (width, heigth)
+        double movement_acceleration_increment_;
+        double horizontal_velocity_limit_;
+        double rise_velocity_limit_;
+        double fall_velocity_limit_;
         /****************************************************************/
         /****************************************************************/
-
+        
         /****************************************************************/
-        //                 INNATE INITIAL CONSTANT STATS                //
+        //                       GAME LOGIC VARIABLES                   //
         /****************************************************************/
-        /*
-        const unsigned int health_points_;
-        const unsigned short int durability_;
-        */
+        unsigned int health_points_;
         /****************************************************************/
         /****************************************************************/
 };
