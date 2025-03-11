@@ -12,6 +12,10 @@ class World {
         World();
         ~World();
         std::vector<Actor *> & getActors();
+
+        /*
+        *   Wordl coordinates are [j][i]. First tells the y and second tells the x.
+        */
         std::array<std::array<unsigned short int, 5000>, 2000> & getBlocks();
     private:
         std::vector<Actor *> actors_;
