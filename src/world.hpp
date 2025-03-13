@@ -1,25 +1,39 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <utility>
 #include <vector>
 #include <array>
+#include <cstdlib>
 
 // Actors
+#include "./block_matrix.hpp"
 #include "./entities/actor/actor.hpp"
 
 class World {
     public:
-        World();
+        World(int width, int heigth);
         ~World();
+
+        int getWidth();
+
+        int getHeigth();
+
+        /*  
+        *   Column-major
+        *   World coordinates are (i, j). First tells the x and second tells the y.
+        */
+        BlockMatrix & getBlockMatrix();
+
         std::vector<Actor *> & getActors();
 
-        /*
-        *   Wordl coordinates are [j][i]. First tells the y and second tells the x.
-        */
-        std::array<std::array<unsigned short int, 5000>, 2000> & getBlocks();
     private:
+        const int width_;
+        const int heigth_;
+        int stride_;
+        BlockMatrix * block_matrix_;       // unsigned short int corresponds to the block id.
+
         std::vector<Actor *> actors_;
-        std::array<std::array<unsigned short int, 5000>, 2000> blocks_;       // unsigned short int corresponds to the block id.
 };
 
 #endif

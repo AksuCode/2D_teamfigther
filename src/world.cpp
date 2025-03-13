@@ -1,13 +1,26 @@
 #include "./world.hpp"
 
-World::World() {}
+World::World(int width, int heigth) : width_(width), heigth_(heigth) {
+    block_matrix_ = new BlockMatrix(heigth_, width_);
+}
 
 World::~World() {
+    delete block_matrix_;
     for (auto it = actors_.begin(); it != actors_.end(); it++) {
         delete (*it);
     }
 }
 
-std::vector<Actor *> & World::getActors() { return actors_; }
+int World::getWidth() {
+    return width_;
+}
 
-std::array<std::array<unsigned short int, 5000>, 2000> & World::getBlocks() { return blocks_; }
+int World::getHeigth() {
+    return heigth_;
+}
+
+BlockMatrix & World::getBlockMatrix() {
+    return *block_matrix_;
+}
+
+std::vector<Actor *> & World::getActors() { return actors_; }
