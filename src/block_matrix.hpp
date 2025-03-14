@@ -24,23 +24,21 @@ struct Block {
 */
 class BlockMatrix {
     private:
-        const size_t rows_;
-        const size_t cols_;
-        size_t stride_;
+        const int width_;
+        const int heigth_;
+        int stride_;
         Block* blocks_;
     
     public:
-        BlockMatrix(size_t rows, size_t cols);
+        BlockMatrix(int width, int heigth);
         ~BlockMatrix();
 
-        // Override () operator for matrix-style access
-        Block& operator()(size_t r, size_t c) {
-            return blocks_[r * stride_ + c];
+        Block& operator()(int i, int j) {
+            return blocks_[i * stride_ + j];
         }
 
-        // Const overload for read-only access
-        const Block& operator()(size_t r, size_t c) const {
-            return blocks_[r * stride_ + c];
+        const Block& operator()(int i, int j) const {
+            return blocks_[i * stride_ + j];
         }
 }
 

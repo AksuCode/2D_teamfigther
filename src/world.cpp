@@ -1,7 +1,7 @@
 #include "./world.hpp"
 
 World::World(int width, int heigth) : width_(width), heigth_(heigth) {
-    block_matrix_ = new BlockMatrix(heigth_, width_);
+    block_matrix_ = new BlockMatrix(width_, heigth_);
 }
 
 World::~World() {
