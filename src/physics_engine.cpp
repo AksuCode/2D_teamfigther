@@ -105,7 +105,7 @@ std::pair<int, int> newPosition() {
     const std::pair<double, double> movement_vector = {new_velocity.first * deltaTime_, new_velocity.second * deltaTime_};
 
     if (movement_vector.first == 0.0 && movement_vector.second == 0.0) {
-        continue;
+        return position;
     }
 
     const std::pair<double, double> candidate_position = {position.first + movement_vector.first, position.second + movement_vector.second};
@@ -127,11 +127,9 @@ std::pair<int, int> newPosition() {
     const std::pair<double, double> candidate_left_top = {candidate_position.first - half_width, candidate_position.second + half_heigth};
     const std::pair<double, double> candidate_right_top = {candidate_position.first + half_width, candidate_position.second + half_heigth};
 
-    int closest_horizontal_dim_y;
-    int closest_vertical_dim_x;
     if (movement_vector.first > 0.0 && movement_vector.second > 0.0) {
-        closest_horizontal_dim_y = (int)candidate_right_top.second + 1;
-        closest_vertical_dim_x = (int)candidate_right_top.first + 1;
+        int closest_horizontal_dim_y = (int)candidate_right_top.second + 1;
+        int closest_vertical_dim_x = (int)candidate_right_top.first + 1;
 
         int begin_i = (int)right_bottom.first + 1;
         int end_i = (int)candidate_right_top.first;
@@ -173,10 +171,37 @@ std::pair<int, int> newPosition() {
                     }
                 }
             }
+        
+        if (closest_horizontal_dim_y != (int)candidate_right_top.second + 1 && closest_vertical_dim_x != (int)candidate_right_top.first + 1) {
+            const double vertical_scalar = ((double)closest_vertical_dim_x - right_top.first) * inverse_movement_normalized_vector.first;
+            const double horizontal_scalar = ((double)closest_horizontal_dim_y - right_top.second) * inverse_movement_normalized_vector.second;
+            const double smallest_scalar = (vertical_scalar > horizontal_scalar) ? vertical_scalar : horizontal_scalar;
+            std::pair<double, double> new_position;
+            new_position.first = position.first + smallest_scalar * movement_normalized_vector.first;
+            new_position.second = position.second + smallest_scalar * movement_normalized_vector.second;
+            return new_position;
+        } else {
+            return candidate_position;
+        }
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
 
     } if else () {
 
     }
+
+
+
 }
 
 /*
