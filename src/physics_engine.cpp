@@ -8,94 +8,136 @@ void PhysicsEngine::applyPhysics(BlockMatrix & block_matrix, std::vector<Actor *
         const std::pair<double, double> position = (*it)->getPosition();
         const std::pair<double, double> velocity = (*it)->getVelocity();
         const std::pair<double, double> acceleration = (*it)->getAcceleration();
-
-        const std::pair<double, double> new_velocity = {velocity.first + acceleration.first * deltaTime_, velocity.second + acceleration.second * deltaTime_};
-
-        const std::pair<double, double> movement_vector = {new_velocity.first * deltaTime_, new_velocity.second * deltaTime_};
-
-        const std::pair<double, double> candidate_position = {position.first + movement_vector.first, position.second + movement_vector.second};
-
-        if (movement_vector.first == 0.0 && movement_vector.second == 0.0) {
-            continue;
-        }
-
-        const double length_denominator = 1 / std::sqrt(movement_vector.first * movement_vector.first + movement_vector.second * movement_vector.second);
-        const std::pair<double, double> movement_normalized_vector = {movement_vector.first * length_denominator, movement_vector.second * length_denominator};
-        const std::pair<double, double> inverse_movement_normalized_vector = {1 / movement_normalized_vector.first, 1 / movement_normalized_vector.second};
-
         const std::pair<double, double> hitbox = (*it)->getHitbox();
-
-        const double half_width = hitbox.first / 2;
-        const double half_heigth = hitbox.second / 2;
-        const std::pair<double, double> left_bottom = {position.first - half_width, position.second - half_heigth};
-        const std::pair<double, double> right_bottom = {position.first + half_width, position.second - half_heigth};
-        const std::pair<double, double> left_top = {position.first - half_width, position.second + half_heigth};
-        const std::pair<double, double> right_top = {position.first + half_width, position.second + half_heigth};
-        const std::pair<double, double> candidate_left_bottom = {candidate_position.first - half_width, candidate_position.second - half_heigth};
-        const std::pair<double, double> candidate_right_bottom = {candidate_position.first + half_width, candidate_position.second - half_heigth};
-        const std::pair<double, double> candidate_left_top = {candidate_position.first - half_width, candidate_position.second + half_heigth};
-        const std::pair<double, double> candidate_right_top = {candidate_position.first + half_width, candidate_position.second + half_heigth};
-
-        std::pair<int, int> closest_x_dim_collision_point;
-        std::pair<int, int> closest_y_dim_collision_point;
-        if (movement_vector.first > 0.0 && movement_vector.second > 0.0) {
-            closest_x_dim_collision_point = {(int)candidate_right_top.first, (int)candidate_right_top.second};
-            closest_y_dim_collision_point = {(int)candidate_right_top.first, (int)candidate_right_top.second};
-
-            if (right_top.second <= candidate_right_bottom.second) {
-                const int begin_j = (int)right_bottom.second;
-                const int end_j = (int)right_top.second;
-                const int begin_i = (int)right_bottom.first;
-                int end_i;
-                bool collision = false;
-                for (int j = begin_j; j <= end_j; j++) {
-                    const double scalar = ((double)(j - begin_j)) * inverse_movement_normalized_vector.second;
-                    int end_i = (int)((double)begin_i + scalar * movement_normalized_vector.first);
-                    for (int i = begin_i; i <= end_i; i++) {
-                        unsigned short int block = block_matrix(j, i);
-                        if (block > LAST_NON_COLLISION_BLOCK_ID) {
-                            closest_x_dim_collision_point.first = i;
-                            closest_x_dim_collision_point.second = j;
-                            break;
-                        }
-                    }
-                    if (end_i == begin_i) { break; }
-                    if (end_i < (int)candidate_right_bottom.first) {
-                        closest_x_dim_collision_point_x_cord = end_i;
-                    }
-                }
-            } else {
-
-            }
-
-            int begin_j = (int)right_bottom.second;
-            int end_j = (int)right_top.second;
-            int begin_i = (int)right_bottom.first;
-            for (int j = begin_j; j <= end_j; j++) {
-                int scalar = ((double)(j - begin_j)) * inverse_movement_normalized_vector.second;
-                int end_i = (int)((double)begin_i + scalar * movement_normalized_vector.first);
-                for (int i = begin_i; i <= end_i; i++) {
-                    unsigned short int block = block_matrix(i, j);
-                    if (block > LAST_NON_COLLISION_BLOCK_ID) {
-                        if (closest_x_collision_point.first > i || closest_x_collision_point.second > j) {
-                            closest_x_collision_point.first = i;
-                            closest_x_collision_point.second = j;
-                        }
-                    }
-                }
-            }
-        } if else () {
-
-        }
-
-
-
-
-
+        bool collision;
+        newPosition(position, velocity, acceleration, hitbox, block_matrix, collision);
     }
 }
 
-std::pair<int, int> newPosition() {
+bool PhysicsEngine::isSolidBlock(unsigned short int block_id) {
+    return block_id > LAST_NON_COLLISION_BLOCK_ID;
+}
+
+std::pair<int, int> PhysicsEngine::newPosition( const std::pair<double, double> position,
+                                                const std::pair<double, double> velocity,
+                                                const std::pair<double, double> acceleration,
+                                                const std::pair<double, double> hitbox,
+                                                BlockMatrix & block_matrix,
+                                                bool & collision) {
+
+    const std::pair<double, double> new_velocity = {velocity.first + acceleration.first * deltaTime_, velocity.second + acceleration.second * deltaTime_};
+
+    const std::pair<double, double> movement_vector = {new_velocity.first * deltaTime_, new_velocity.second * deltaTime_};
+
+    if (movement_vector.first == 0.0 && movement_vector.second == 0.0) {
+        return position;
+    }
+
+    const std::pair<double, double> candidate_position = {position.first + movement_vector.first, position.second + movement_vector.second};
+
+    const std::pair<double, double> inverse_movement_vector = {1 / movement_vector.first, 1 / movement_vector.second};
+
+    const double half_width = hitbox.first / 2;
+    const double half_heigth = hitbox.second / 2;
+    const std::pair<double, double> left_bottom = {position.first - half_width, position.second - half_heigth};
+    const std::pair<double, double> right_bottom = {position.first + half_width, position.second - half_heigth};
+    const std::pair<double, double> left_top = {position.first - half_width, position.second + half_heigth};
+    const std::pair<double, double> right_top = {position.first + half_width, position.second + half_heigth};
+    const std::pair<double, double> candidate_left_bottom = {candidate_position.first - half_width, candidate_position.second - half_heigth};
+    const std::pair<double, double> candidate_right_bottom = {candidate_position.first + half_width, candidate_position.second - half_heigth};
+    const std::pair<double, double> candidate_left_top = {candidate_position.first - half_width, candidate_position.second + half_heigth};
+    const std::pair<double, double> candidate_right_top = {candidate_position.first + half_width, candidate_position.second + half_heigth};
+
+    if (movement_vector.first > 0.0 && movement_vector.second > 0.0) {
+        int closest_horizontal_dim_y = (int)candidate_right_top.second + 1;
+        int closest_vertical_dim_x = (int)candidate_right_top.first + 1;
+        bool collision_detected = false;
+
+        int begin_i = (int)left_top.first;
+        int end_i = (int)candidate_right_top.first;
+        double scalar = 0.0;
+        for (int i = begin_i; i <= end_i; i++) {
+            int begin_j = (i <= (int)right_bottom.first) ? (int)left_top.second + 1 : (int)(right_bottom.second + scalar * movement_vector.second);
+            int end_j = ((int)candidate_top_right.first < i) ? (int)(right_top.second + scalar * movement_vector.second) : (int)candidate_top_right.second;
+            for (int j = begin_j; j <= end_j; j++) {
+                unsigned short int block_id = block_matrix(i, j).id;
+                if (isSolidBlock(block_id)) {
+                    collision_detected = true;
+                    double x_divisor = top_right.first + scalar * movement_vector.first;
+                    if (x_divisor <= i) {
+                        closest_vertical_dim_x = i;
+                        goto end;
+                    } else {
+                        closest_horizontal_dim_y = j;
+                        begin_i = i + 1;
+                        goto intermediate;
+                    }
+                }
+            }
+            scalar += inverse_movement_vector.first;
+        }
+
+        goto end;
+
+        intermediate:
+            int end_j = closest_horizontal_dim_y;
+            scalar = 0.0
+            for (int i = begin_i; i <= end_i; i++) {
+                int begin_j = (i <= (int)right_bottom.first) ? (int)left_top.second + 1 : (int)(right_bottom.second + scalar * movement_vector.second);
+                for (int j = begin_j; j <= end_j; j++) {
+                    unsigned short int block_id = block_matrix(i, j).id;
+                    if (isSolidBlock(block_id)) {
+                        collision_detected = true;
+                        double x_divisor = top_right.first + scalar * movement_vector.first;
+                        if (x_divisor <= i) {
+                            closest_vertical_dim_x = i;
+                            goto end;
+                        } else {
+                            closest_horizontal_dim_y = j;
+                            end_j = closest_horizontal_dim_y;
+                            break;
+                        }
+                    }
+                }
+                scalar += inverse_movement_vector.first;
+            }
+
+        end:
+            if (collision_detected) {
+                const double vertical_scalar = ((double)closest_vertical_dim_x - right_top.first) * inverse_movement_vector.first;
+                const double horizontal_scalar = ((double)closest_horizontal_dim_y - right_top.second) * inverse_movement_vector.second;
+                const double smallest_scalar = (vertical_scalar > horizontal_scalar) ? vertical_scalar : horizontal_scalar;
+                std::pair<double, double> new_position;
+                new_position.first = position.first + smallest_scalar * movement_vector.first;
+                new_position.second = position.second + smallest_scalar * movement_vector.second;
+                return new_position;
+            } else {
+                return candidate_position;
+            }
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    } if else () {
+
+    }
+
+
+
+}
+
+
+/*
+std::pair<int, int> newPosition1() {
     const std::pair<double, double> position = (*it)->getPosition();
     const std::pair<double, double> velocity = (*it)->getVelocity();
     const std::pair<double, double> acceleration = (*it)->getAcceleration();
@@ -203,6 +245,7 @@ std::pair<int, int> newPosition() {
 
 
 }
+*/
 
 /*
 void PhysicsEngine::applyPhysics(BlockMatrix & block_matrix, std::vector<Actor *> & actors) {
