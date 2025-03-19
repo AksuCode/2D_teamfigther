@@ -5,6 +5,8 @@
 
 #include <utility>
 #include <cmath>
+#include <limits.h>
+#include <algorithm>
 
 #include "./world.hpp"
 
