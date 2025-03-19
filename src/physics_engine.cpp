@@ -40,14 +40,8 @@ void PhysicsEngine::rigidCollisionDetection( bool & collision,
     const double half_width = hitbox.first / 2;
     const double half_height = hitbox.second / 2;
 
-    const std::pair<double, double> positive_orthogonal_rotation_dv = {-direction_unit_vector.second, direction_unit_vector.first};
-    const std::pair<double, double> negative_orthogonal_rotation_dv = {direction_unit_vector.second, -direction_unit_vector.first};
-
-    const std::pair<double, double> corner_1_direction_vector = { half_width * direction_unit_vector.first + half_height * positive_orthogonal_rotation_dv.first,
-                                                                    half_width * direction_unit_vector.second + half_height * positive_orthogonal_rotation_dv.second};
-
-    const std::pair<double, double> corner_4_direction_vector = { half_width * direction_unit_vector.first + half_height * negative_orthogonal_rotation_dv.first,
-                                                                    half_width * direction_unit_vector.second + half_height * negative_orthogonal_rotation_dv.second};
+    const std::pair<double, double> corner_1_direction_vector = {half_width, half_height};
+    const std::pair<double, double> corner_4_direction_vector = {half_width, - half_height};
 
     const double c1_mv_dot_product = corner_1_direction_vector.first * movement_vector.first + corner_1_direction_vector.second * movement_vector.second;
     const double c4_mv_dot_product = corner_4_direction_vector.first * movement_vector.first + corner_4_direction_vector.second * movement_vector.second;
