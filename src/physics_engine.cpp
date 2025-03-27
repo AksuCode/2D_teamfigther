@@ -14,6 +14,193 @@ void PhysicsEngine::applyPhysics(BlockMatrix & block_matrix, std::vector<Actor *
     }
 }
 
+void PhysicsEngine::rigidCollisionDetection( bool & collision,
+                                        std::pair<double, double> & position,
+                                        std::pair<double, double> & velocity,
+                                        std::pair<double, double> & acceleration,
+                                        const std::pair<double, double> hitbox,
+                                        const SolidsColumnMajorBitmap * scmb,
+                                        const SolidsRowMajorBitmap * srmb
+                                        ) {
+
+    const std::pair<double, double> new_velocity = {velocity.first + acceleration.first * deltaTime_, velocity.second + acceleration.second * deltaTime_};
+    const std::pair<double, double> movement_vector = {new_velocity.first * deltaTime_, new_velocity.second * deltaTime_};
+
+    if (movement_vector.first == 0.0 && movement_vector.second == 0.0) {
+        return;
+    }
+
+    const std::pair<double, double> candidate_position = {position.first + movement_vector.first, position.second + movement_vector.second};
+
+    const std::pair<double, double> inverse_movement_vector = {1 / movement_vector.first, 1 / movement_vector.second};
+
+    const double half_width = hitbox.first / 2;
+    const double half_height = hitbox.second / 2;
+
+    const std::pair<double, double> corner_1_direction_vector = {half_width, half_height};
+    const std::pair<double, double> corner_4_direction_vector = {half_width, - half_height};
+
+    const double c1_mv_dot_product = corner_1_direction_vector.first * movement_vector.first + corner_1_direction_vector.second * movement_vector.second;
+    const double c4_mv_dot_product = corner_4_direction_vector.first * movement_vector.first + corner_4_direction_vector.second * movement_vector.second;
+
+    std::pair<double, double> tmp_covering_vector;
+    std::pair<double, double> tmp_divisor_vector;
+    if (abs(c1_mv_dot_product) < abs(c4_mv_dot_product)) {
+        tmp_covering_vector = corner_1_direction_vector;
+        tmp_divisor_vector = corner_4_direction_vector;
+    } else {
+        tmp_covering_vector = corner_4_direction_vector;
+        tmp_divisor_vector = corner_1_direction_vector;
+    }
+
+    const std::pair<double, double> covering_vector = tmp_covering_vector;
+    const std::pair<double, double> opposite_covering_vector = {- tmp_covering_vector.first, - tmp_covering_vector.second};
+
+    const std::pair<double, double> divisor_vector = ((divisor_vector.first * movement_vector.first + divisor_vector.second * movement_vector.second) > 0.0) ?
+                                                        tmp_divisor_vector :
+                                                        {- tmp_divisor_vector.first, - tmp_divisor_vector.second};
+
+    const std::pair<double, double> point_1 = {position.first + covering_vector.first, position.second + covering_vector.second};
+    const std::pair<double, double> point_2 = {position.first + opposite_covering_vector.first, position.second + opposite_covering_vector.second};
+    const std::pair<double, double> end_point_1 = {candidate_position.first + covering_vector.first, candidate_position.second + covering_vector.second};
+    const std::pair<double, double> end_point_2 = {candidate_position.first + opposite_covering_vector.first, candidate_position.second + opposite_covering_vector.second};
+    const std::pair<double, double> divisor = {position.first + divisor_vector.first, position.second + divisor_vector.second};
+    const std::pair<double, double> end_divisor = {candidate_position.first + divisor_vector.first, candidate_position.second + divisor_vector.second};
+
+    int closest_vertical_dim_x;
+    int closest_horizontal_dim_y;
+    bool collision_detected = false;
+    
+    {
+        int begin_i = (int)point_1.first;
+        int end_i = (int)end_point_1.first;
+        int increment_i = 1;
+        if (movement_vector.first < 0) {
+            int tmp = begin_i;
+            begin_i = end_i;
+            end_i = tmp;
+            increment_i = -1;               // Here the direction of iteration matters because we are always approaching the destination
+        }
+        for (int i = begin_i; i != end_i + increment_i; i+=increment_i) {
+            int begin_j = (int)(point_1.second + (double)(i - (int)point_1.first) * inverse_movement_vector.first * movement_vector.second);
+            int end_j = (int)(divisor.second + (double)(i - (int)divisor.first) * inverse_movement_vector.first * movement_vector.second);
+            if (end_j < begin_j) {
+                int tmp = begin_j;
+                begin_j = end_j;
+                end_j = tmp;
+            }
+
+            const int begin_n = begin_j / CHUNCK_BIT_SIZE;
+            const int end_n = end_j / CHUNCK_BIT_SIZE;
+            const int begin_mod = begin_j % CHUNCK_BIT_SIZE;
+            const int end_mod = end_j % CHUNCK_BIT_SIZE;
+            const unsigned int max_value = ~0;    // 1111111111...
+
+            unsigned int bit_mask = max_value << begin_mod;
+            const unsigned int first_chunck = SolidsColumnMajorBitmap(i, begin_n);
+            if (first_chunck & bit_mask) {
+                closest_vertical_dim_x = i;
+                collision_detected = true;
+                goto horizontal;
+            }
+
+            for (int n = begin_n + 1; n <= end_n; n++) {
+                unsigned int chunck = SolidsColumnMajorBitmap(i, n);
+                if (chunck) {
+                    closest_vertical_dim_x = i;
+                    collision_detected = true;
+                    goto horizontal;
+                }
+            }
+
+            if (end_mod != 0) {
+                bit_mask = max_value >> (CHUNCK_BIT_SIZE - end_mod);
+                const unsigned int last_chunck = SolidsColumnMajorBitmap(i, end_n + 1);
+                if (last_chunck & bit_mask) {
+                    closest_vertical_dim_x = i;
+                    collision_detected = true;
+                    goto horizontal;
+                }
+            }
+
+        }
+    }
+
+    horizontal:
+        {
+            int begin_j = (int)point_2.second;
+            int end_j = (int)end_point_2.second;
+            int increment_j = 1;
+            if (movement_vector.second < 0) {
+                int tmp = begin_j;
+                begin_j = end_j;
+                end_j = tmp;
+                increment_j = -1;
+            }
+            for (int j = begin_j; j != end_j + increment_j; j+=increment_j) {
+                int begin_i = (int)(point_2.first + (double)(j - (int)point_2.second) * inverse_movement_vector.second * movement_vector.first);
+                int end_i = (int)(divisor.first + (double)(j - (int)divisor.second) * inverse_movement_vector.second * movement_vector.first);
+                if (movement_vector.first < 0) {
+                    int tmp = begin_i;
+                    begin_i = end_i;
+                    end_i = tmp;
+                }
+
+                const int begin_n = begin_i / CHUNCK_BIT_SIZE;
+                const int end_n = end_i / CHUNCK_BIT_SIZE;
+                const int begin_mod = begin_i % CHUNCK_BIT_SIZE;
+                const int end_mod = end_i % CHUNCK_BIT_SIZE;
+                const unsigned int max_value = ~0;    // 1111111111...
+
+                unsigned int bit_mask = max_value << begin_mod;
+                const unsigned int first_chunck = SolidsRowMajorBitmap(j, begin_n);
+                if (first_chunck & bit_mask) {
+                    closest_horizontal_dim_y = j;
+                    collision_detected = true;
+                    goto end;
+                }
+
+                for (int n = begin_n + 1; n <= end_n; n++) {
+                    unsigned int chunck = SolidsRowMajorBitmap(j, n);
+                    if (chunck) {
+                        closest_horizontal_dim_y = j;
+                        collision_detected = true;
+                        goto end;
+                    }
+                }
+
+                if (end_mod != 0) {
+                    bit_mask = max_value >> (CHUNCK_BIT_SIZE - end_mod);
+                    const unsigned int last_chunck = SolidsRowMajorBitmap(j, end_n + 1);
+                    if (last_chunck & bit_mask) {
+                        closest_horizontal_dim_y = j;
+                        collision_detected = true;
+                        goto end;
+                    }
+                }
+
+            }
+        }
+    
+    end:
+        if (!collision_detected) {
+            position = candidate_position;
+            return;
+        }
+
+        const double hitbox_x_dim = (position.first < closest_vertical_dim_x) ? position.first + half_width : position.first - half_width;
+        const double hitbox_y_dim = (position.second < closest_horizontal_dim_y) ? position.second + half_height : position.second - half_height;
+        const double vertical_scalar = ((double)closest_vertical_dim_x - hitbox_x_dim) * inverse_movement_vector.first;
+        const double horizontal_scalar = ((double)closest_horizontal_dim_y - hitbox_y_dim) * inverse_movement_vector.second;
+        const double smallest_scalar = (vertical_scalar > horizontal_scalar) ? vertical_scalar : horizontal_scalar;
+        std::pair<double, double> new_position;
+        new_position.first = position.first + smallest_scalar * movement_vector.first;
+        new_position.second = position.second + smallest_scalar * movement_vector.second;
+        position = new_position;
+
+}
+
+/*
 bool PhysicsEngine::isSolidBlock(unsigned short int block_id) {
     return block_id > LAST_NON_COLLISION_BLOCK_ID;
 }
@@ -30,7 +217,7 @@ void PhysicsEngine::rigidCollisionDetection( bool & collision,
     const std::pair<double, double> movement_vector = {new_velocity.first * deltaTime_, new_velocity.second * deltaTime_};
 
     if (movement_vector.first == 0.0 && movement_vector.second == 0.0) {
-        goto end;
+        return;
     }
 
     const std::pair<double, double> candidate_position = {position.first + movement_vector.first, position.second + movement_vector.second};
@@ -154,7 +341,9 @@ void PhysicsEngine::rigidCollisionDetection( bool & collision,
         position = new_position;
 
 }
+*/
 
+/*
 struct Line {   // Ax + By + C = 0:
     double A;
     double B;
@@ -284,6 +473,7 @@ void PhysicsEngine::angeledCollisionDetection( bool & collision,
 
 
 }
+*/
 
 /*
 void PhysicsEngine::collisionDetection( bool & collision,

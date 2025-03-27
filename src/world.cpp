@@ -1,11 +1,11 @@
 #include "./world.hpp"
 
 World::World(int width, int heigth) : width_(width), heigth_(heigth) {
-    block_matrix_ = new BlockMatrix(width_, heigth_);
+    block_world_ = new BlockWorld(width_, heigth_);
 }
 
 World::~World() {
-    delete block_matrix_;
+    delete block_world_;
     for (auto it = actors_.begin(); it != actors_.end(); it++) {
         delete (*it);
     }
@@ -19,8 +19,8 @@ int World::getHeigth() {
     return heigth_;
 }
 
-BlockMatrix & World::getBlockMatrix() {
-    return *block_matrix_;
+BlockWorld * World::getBlockWorld() {
+    return *block_world_;
 }
 
 std::vector<Actor *> & World::getActors() { return actors_; }

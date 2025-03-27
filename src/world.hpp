@@ -7,7 +7,7 @@
 #include <cstdlib>
 
 // Actors
-#include "./block_matrix.hpp"
+#include "./block_world.hpp"
 #include "./entities/actor/actor.hpp"
 
 class World {
@@ -19,19 +19,15 @@ class World {
 
         int getHeigth();
 
-        /*  
-        *   Column-major
-        *   World coordinates are (i, j). First tells the x and second tells the y.
-        */
-        BlockMatrix & getBlockMatrix();
+        BlockWorld * getBlockWorld();
 
         std::vector<Actor *> & getActors();
 
     private:
         const int width_;
         const int heigth_;
-        int stride_;
-        BlockMatrix * block_matrix_;       // unsigned short int corresponds to the block id.
+
+        BlockWorld * block_world_;
 
         std::vector<Actor *> actors_;
 };
