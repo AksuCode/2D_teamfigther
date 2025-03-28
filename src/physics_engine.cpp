@@ -14,10 +14,9 @@ void PhysicsEngine::applyPhysics(BlockMatrix & block_matrix, std::vector<Actor *
     }
 }
 
-void PhysicsEngine::rigidCollisionDetection( bool & collision,
-                                        std::pair<double, double> & position,
-                                        std::pair<double, double> & velocity,
-                                        std::pair<double, double> & acceleration,
+bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, double> & position,
+                                        const std::pair<double, double> velocity,
+                                        const std::pair<double, double> acceleration,
                                         const std::pair<double, double> hitbox,
                                         const SolidsColumnMajorBitmap * scmb,
                                         const SolidsRowMajorBitmap * srmb
@@ -27,7 +26,7 @@ void PhysicsEngine::rigidCollisionDetection( bool & collision,
     const std::pair<double, double> movement_vector = {new_velocity.first * deltaTime_, new_velocity.second * deltaTime_};
 
     if (movement_vector.first == 0.0 && movement_vector.second == 0.0) {
-        return;
+        return true;
     }
 
     const std::pair<double, double> candidate_position = {position.first + movement_vector.first, position.second + movement_vector.second};
@@ -185,7 +184,7 @@ void PhysicsEngine::rigidCollisionDetection( bool & collision,
     end:
         if (!collision_detected) {
             position = candidate_position;
-            return;
+            return false;
         }
 
         const double hitbox_x_dim = (position.first < closest_vertical_dim_x) ? position.first + half_width : position.first - half_width;
@@ -198,6 +197,7 @@ void PhysicsEngine::rigidCollisionDetection( bool & collision,
         new_position.second = position.second + smallest_scalar * movement_vector.second;
         position = new_position;
 
+    return true;
 }
 
 /*

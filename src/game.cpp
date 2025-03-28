@@ -23,7 +23,7 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
 Game::~Game() {
     delete game_eventhandler_;
     delete game_action_;
-    delete game_window_ ;
+    delete game_window_;
     delete world_;
     delete world_render_;
     SDL_Quit();

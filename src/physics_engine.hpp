@@ -13,6 +13,13 @@
 class PhysicsEngine{
     public:
         PhysicsEngine(const double deltaTime);
+
+        bool rigidCollisionDetectionAndResolution( std::pair<double, double> & position,
+                                        const std::pair<double, double> velocity,
+                                        const std::pair<double, double> acceleration,
+                                        const std::pair<double, double> hitbox,
+                                        const SolidsColumnMajorBitmap * scmb,
+                                        const SolidsRowMajorBitmap * srmb);
     private:
         const double deltaTime_;
 };
