@@ -23,6 +23,7 @@
 #include "ecs/components/physics/gravity.hpp"
 #include "ecs/components/actor/creature.hpp"
 #include "ecs/components/actor/player.hpp"
+#include "ecs/components/actor/main_player.hpp"
 #include "ecs/components/actor/player/wizard.hpp"
 #include "ecs/systems/control/main_player_control_system.hpp"
 #include "ecs/systems/control/main_player_position_getter_system.hpp"

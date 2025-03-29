@@ -32,6 +32,7 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
     gCoordinator.RegisterComponent<Thrust>();
     gCoordinator.RegisterComponent<Weight>();
     gCoordinator.RegisterComponent<Player>();
+    gCoordinator.RegisterComponent<MainPlayer>();
     gCoordinator.RegisterComponent<Creature>();
     gCoordinator.RegisterComponent<Wizard>();
     //
@@ -60,7 +61,7 @@ void Game::gameLoop() {
     auto main_player_control_system = gCoordinator.RegisterSystem<MainPlayerControlSystem>();
     {
         Signature signature;
-		signature.set(gCoordinator.GetComponentType<Player>());
+		signature.set(gCoordinator.GetComponentType<MainPlayer>());
         signature.set(gCoordinator.GetComponentType<Motion>());
         gCoordinator.SetSystemSignature<MainPlayerControlSystem>(signature);
     }
@@ -69,14 +70,14 @@ void Game::gameLoop() {
     auto main_player_position_getter_system = gCoordinator.RegisterSystem<MainPlayerPositionGetterSystem>();
     {
         Signature signature;
-		signature.set(gCoordinator.GetComponentType<Player>());
+		signature.set(gCoordinator.GetComponentType<MainPlayer>());
         signature.set(gCoordinator.GetComponentType<Motion>());
         gCoordinator.SetSystemSignature<MainPlayerPositionGetterSystem>(signature);
     }
     main_player_position_getter_system->Init();
 
     Entity main_player = gCoordinator.CreateEntity();
-    gCoordinator.AddComponent(main_player, Player{});
+    gCoordinator.AddComponent(main_player, MainPlayer{});
     gCoordinator.AddComponent(
         main_player,
         Motion{
@@ -85,6 +86,7 @@ void Game::gameLoop() {
             .acceleration = {0.0, 0.0}}
     );
     //
+
 
     while (true) {
 
@@ -120,6 +122,7 @@ void Game::gameLoop() {
         if (animation_scheduler->executeOnSchedule()) {
             world_render_->renderWorld();
             game_window_->updateWindow();
+            std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl; 
         }
         // 
     }
