@@ -4,8 +4,10 @@
 #include <unordered_map>
 #include <memory>
 #include <utility>
+#include "../../config.hpp"
 
 #include "types.hpp"
+#include "component_array.hpp"
 
 class ComponentManager {
     public:

@@ -2,6 +2,7 @@
 
 PhysicsEngine::PhysicsEngine(const double deltaTime) : deltaTime_(deltaTime) {}
 
+/*
 void PhysicsEngine::applyPhysics(BlockMatrix & block_matrix, std::vector<Actor *> & actors) {
 
     for (auto it = actors.begin(); it != actors.end(); it++) {
@@ -13,6 +14,7 @@ void PhysicsEngine::applyPhysics(BlockMatrix & block_matrix, std::vector<Actor *
         newPosition(position, velocity, acceleration, hitbox, block_matrix, collision);
     }
 }
+*/
 
 bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, double> & position,
                                         const std::pair<double, double> velocity,
@@ -57,7 +59,7 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
 
     const std::pair<double, double> divisor_vector = ((divisor_vector.first * movement_vector.first + divisor_vector.second * movement_vector.second) > 0.0) ?
                                                         tmp_divisor_vector :
-                                                        {- tmp_divisor_vector.first, - tmp_divisor_vector.second};
+                                                        std::pair(- tmp_divisor_vector.first, - tmp_divisor_vector.second);
 
     const std::pair<double, double> point_1 = {position.first + covering_vector.first, position.second + covering_vector.second};
     const std::pair<double, double> point_2 = {position.first + opposite_covering_vector.first, position.second + opposite_covering_vector.second};
@@ -89,14 +91,14 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
                 end_j = tmp;
             }
 
-            const int begin_n = begin_j / CHUNCK_BIT_SIZE;
-            const int end_n = end_j / CHUNCK_BIT_SIZE;
-            const int begin_mod = begin_j % CHUNCK_BIT_SIZE;
-            const int end_mod = end_j % CHUNCK_BIT_SIZE;
+            const int begin_n = begin_j / CHUNK_BIT_SIZE;
+            const int end_n = end_j / CHUNK_BIT_SIZE;
+            const int begin_mod = begin_j % CHUNK_BIT_SIZE;
+            const int end_mod = end_j % CHUNK_BIT_SIZE;
             const unsigned int max_value = ~0;    // 1111111111...
 
             unsigned int bit_mask = max_value << begin_mod;
-            const unsigned int first_chunck = SolidsColumnMajorBitmap(i, begin_n);
+            const unsigned int first_chunck = (*scmb)(i, begin_n);
             if (first_chunck & bit_mask) {
                 closest_vertical_dim_x = i;
                 collision_detected = true;
@@ -104,7 +106,7 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
             }
 
             for (int n = begin_n + 1; n <= end_n; n++) {
-                unsigned int chunck = SolidsColumnMajorBitmap(i, n);
+                const unsigned int chunck = (*scmb)(i, n);
                 if (chunck) {
                     closest_vertical_dim_x = i;
                     collision_detected = true;
@@ -113,8 +115,8 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
             }
 
             if (end_mod != 0) {
-                bit_mask = max_value >> (CHUNCK_BIT_SIZE - end_mod);
-                const unsigned int last_chunck = SolidsColumnMajorBitmap(i, end_n + 1);
+                bit_mask = max_value >> (CHUNK_BIT_SIZE - end_mod);
+                const unsigned int last_chunck = (*scmb)(i, end_n + 1);
                 if (last_chunck & bit_mask) {
                     closest_vertical_dim_x = i;
                     collision_detected = true;
@@ -145,14 +147,14 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
                     end_i = tmp;
                 }
 
-                const int begin_n = begin_i / CHUNCK_BIT_SIZE;
-                const int end_n = end_i / CHUNCK_BIT_SIZE;
-                const int begin_mod = begin_i % CHUNCK_BIT_SIZE;
-                const int end_mod = end_i % CHUNCK_BIT_SIZE;
+                const int begin_n = begin_i / CHUNK_BIT_SIZE;
+                const int end_n = end_i / CHUNK_BIT_SIZE;
+                const int begin_mod = begin_i % CHUNK_BIT_SIZE;
+                const int end_mod = end_i % CHUNK_BIT_SIZE;
                 const unsigned int max_value = ~0;    // 1111111111...
 
                 unsigned int bit_mask = max_value << begin_mod;
-                const unsigned int first_chunck = SolidsRowMajorBitmap(j, begin_n);
+                const unsigned int first_chunck = (*srmb)(j, begin_n);
                 if (first_chunck & bit_mask) {
                     closest_horizontal_dim_y = j;
                     collision_detected = true;
@@ -160,7 +162,7 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
                 }
 
                 for (int n = begin_n + 1; n <= end_n; n++) {
-                    unsigned int chunck = SolidsRowMajorBitmap(j, n);
+                    const unsigned int chunck = (*srmb)(j, n);
                     if (chunck) {
                         closest_horizontal_dim_y = j;
                         collision_detected = true;
@@ -169,8 +171,8 @@ bool PhysicsEngine::rigidCollisionDetectionAndResolution(   std::pair<double, do
                 }
 
                 if (end_mod != 0) {
-                    bit_mask = max_value >> (CHUNCK_BIT_SIZE - end_mod);
-                    const unsigned int last_chunck = SolidsRowMajorBitmap(j, end_n + 1);
+                    bit_mask = max_value >> (CHUNK_BIT_SIZE - end_mod);
+                    const unsigned int last_chunck = (*srmb)(j, end_n + 1);
                     if (last_chunck & bit_mask) {
                         closest_horizontal_dim_y = j;
                         collision_detected = true;

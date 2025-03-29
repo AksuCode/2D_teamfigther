@@ -3,8 +3,10 @@
 
 #include <unordered_map>
 #include <memory>
+#include "../../config.hpp"
 
 #include "types.hpp"
+#include "system.hpp"
 
 class SystemManager {
     public:

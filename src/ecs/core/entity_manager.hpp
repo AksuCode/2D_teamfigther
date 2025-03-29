@@ -2,6 +2,7 @@
 #define ENTITY_MANAGER_HPP
 
 #include <queue>
+#include "../../config.hpp"
 
 #include "types.hpp"
 

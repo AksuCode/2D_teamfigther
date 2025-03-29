@@ -7,7 +7,7 @@
 
 #include <SDL2/SDL.h>
 
-enum class ActionCode {
+enum ActionCode : int {
     LEFT,
     RIGHT,
     UP,
@@ -18,18 +18,18 @@ enum class ActionCode {
 
 class Action {
     public:
-        const std::array<bool, (int)ActionCode::ACTION_CODE_COUNT> & getActions(const Uint8 * keyboard_state, Uint32 mouse_state);
+        const std::array<bool, ActionCode::ACTION_CODE_COUNT> & getActions(const Uint8 * keyboard_state, Uint32 mouse_state);
 
     private:
-        std::array<bool, (int)ActionCode::ACTION_CODE_COUNT> actions_;
+        std::array<bool, ActionCode::ACTION_CODE_COUNT> actions_;
         std::vector<std::pair<int, int>> action_code_to_keyboard_lookup_ = {
-                                                                                {(int)ActionCode::LEFT, 4},
-                                                                                {(int)ActionCode::RIGHT, 7},
-                                                                                {(int)ActionCode::UP, 26},
-                                                                                {(int)ActionCode::DOWN, 22}
+                                                                                {ActionCode::LEFT, 4},
+                                                                                {ActionCode::RIGHT, 7},
+                                                                                {ActionCode::UP, 26},
+                                                                                {ActionCode::DOWN, 22}
                                                                             };
         std::vector<std::pair<int, int>> action_code_to_mouse_lookup_ = {
-                                                                            {(int)ActionCode::USE, 1}
+                                                                            {ActionCode::USE, 1}
                                                                         };
 };
 

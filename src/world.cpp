@@ -20,7 +20,7 @@ int World::getHeigth() {
 }
 
 BlockWorld * World::getBlockWorld() {
-    return *block_world_;
+    return block_world_;
 }
 
 std::vector<Actor *> & World::getActors() { return actors_; }

@@ -1,8 +1,8 @@
 #include "../include/action.hpp"
 
-const std::array<bool, (int)ActionCode::ACTION_CODE_COUNT> & Action::getActions(const Uint8 * keyboard_state, Uint32 mouse_state) {
+const std::array<bool, ActionCode::ACTION_CODE_COUNT> & Action::getActions(const Uint8 * keyboard_state, Uint32 mouse_state) {
 
-    for(int i = 0; i < (int)ActionCode::ACTION_CODE_COUNT; i++) {
+    for(int i = 0; i < ActionCode::ACTION_CODE_COUNT; i++) {
         actions_[i] = false;
     }
 

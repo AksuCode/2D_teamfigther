@@ -7,5 +7,5 @@
 class MainPlayerControlSystem : public System {
 	public:
 		void Init() {}
-		void Update(const std::array<bool, (int)ActionCode::ACTION_CODE_COUNT> & actions);
+		void Update(const std::array<bool, ActionCode::ACTION_CODE_COUNT> & actions);
 };

@@ -8,7 +8,7 @@ extern int CACHE_LINE_BYTE_SIZE;    // Default 64
 
 // CPU: 
 extern int INSTRUCTIONS_PER_CYCLE;    // Default 4
-void measureIPC()
+//void measureIPC();
 
 // GPU:
 

@@ -40,10 +40,6 @@ class Game {
 
         World * world_;
         WorldRender * world_render_;
-
-        // ECS
-        Coordinator gCoordinator_;
-        //
 };
 
 #endif

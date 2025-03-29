@@ -1,5 +1,9 @@
 #include "./game.hpp"
 
+// ECS
+Coordinator gCoordinator;
+//
+
 Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
     // Initialize SDL library
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -16,20 +20,20 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
     game_action_ = new Action();
     game_window_ = new GameWindow();
 
-    world_ = new World();
+    world_ = new World(6000, 1000);
     world_render_ = new WorldRender(game_window_);
 
     // ECS
-    gCoordinator_.Init();
-    gCoordinator_.RegisterComponent<Gravity>();
-    gCoordinator_.RegisterComponent<Motion>();
-    gCoordinator_.RegisterComponent<Rotation>();
-    gCoordinator_.RegisterComponent<Scale>();
-    gCoordinator_.RegisterComponent<Thrust>();
-    gCoordinator_.RegisterComponent<Weight>();
-    gCoordinator_.RegisterComponent<Player>();
-    gCoordinator_.RegisterComponent<Creature>();
-    gCoordinator_.RegisterComponent<Wizard>();
+    gCoordinator.Init();
+    gCoordinator.RegisterComponent<Gravity>();
+    gCoordinator.RegisterComponent<Motion>();
+    gCoordinator.RegisterComponent<Rotation>();
+    gCoordinator.RegisterComponent<Scale>();
+    gCoordinator.RegisterComponent<Thrust>();
+    gCoordinator.RegisterComponent<Weight>();
+    gCoordinator.RegisterComponent<Player>();
+    gCoordinator.RegisterComponent<Creature>();
+    gCoordinator.RegisterComponent<Wizard>();
     //
 }
 
@@ -53,7 +57,7 @@ void Game::gameLoop() {
     world_render_->loadWorld();
 
     // ECS
-    auto main_player_control_system = gCoordinator_.RegisterSystem<MainPlayerControlSystem>();
+    auto main_player_control_system = gCoordinator.RegisterSystem<MainPlayerControlSystem>();
     {
         Signature signature;
 		signature.set(gCoordinator.GetComponentType<Player>());
@@ -62,7 +66,7 @@ void Game::gameLoop() {
     }
     main_player_control_system->Init();
 
-    auto main_player_position_getter_system = gCoordinator_.RegisterSystem<MainPlayerPositionGetterSystem>();
+    auto main_player_position_getter_system = gCoordinator.RegisterSystem<MainPlayerPositionGetterSystem>();
     {
         Signature signature;
 		signature.set(gCoordinator.GetComponentType<Player>());

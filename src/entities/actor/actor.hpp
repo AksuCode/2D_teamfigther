@@ -5,6 +5,7 @@
 
 class Actor {
     public:
+        Actor(std::pair<int, int> starting_position);
         const std::pair<double, double> & getPosition();
         const std::pair<double, double> & getVelocity();
         const std::pair<double, double> & getAcceleration();
