@@ -13,6 +13,20 @@
 #include "./world.hpp"
 #include "./world_render.hpp"
 
+#include "ecs/core/coordinator.hpp"
+#include "ecs/components/physics/gravity.hpp"
+#include "ecs/components/physics/motion.hpp"
+#include "ecs/components/physics/rotation.hpp"
+#include "ecs/components/physics/scale.hpp"
+#include "ecs/components/physics/thrust.hpp"
+#include "ecs/components/physics/weight.hpp"
+#include "ecs/components/physics/gravity.hpp"
+#include "ecs/components/actor/creature.hpp"
+#include "ecs/components/actor/player.hpp"
+#include "ecs/components/actor/player/wizard.hpp"
+#include "ecs/systems/control/main_player_control_system.hpp"
+#include "ecs/systems/control/main_player_position_getter_system.hpp"
+
 class Game {
     public:
         Game(SDL_LogOutputFunction sdl_logOutputFunction);
@@ -26,6 +40,10 @@ class Game {
 
         World * world_;
         WorldRender * world_render_;
+
+        // ECS
+        Coordinator gCoordinator_;
+        //
 };
 
 #endif

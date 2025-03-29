@@ -18,6 +18,19 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
 
     world_ = new World();
     world_render_ = new WorldRender(game_window_);
+
+    // ECS
+    gCoordinator_.Init();
+    gCoordinator_.RegisterComponent<Gravity>();
+    gCoordinator_.RegisterComponent<Motion>();
+    gCoordinator_.RegisterComponent<Rotation>();
+    gCoordinator_.RegisterComponent<Scale>();
+    gCoordinator_.RegisterComponent<Thrust>();
+    gCoordinator_.RegisterComponent<Weight>();
+    gCoordinator_.RegisterComponent<Player>();
+    gCoordinator_.RegisterComponent<Creature>();
+    gCoordinator_.RegisterComponent<Wizard>();
+    //
 }
 
 Game::~Game() {
@@ -39,6 +52,36 @@ void Game::gameLoop() {
 
     world_render_->loadWorld();
 
+    // ECS
+    auto main_player_control_system = gCoordinator_.RegisterSystem<MainPlayerControlSystem>();
+    {
+        Signature signature;
+		signature.set(gCoordinator.GetComponentType<Player>());
+        signature.set(gCoordinator.GetComponentType<Motion>());
+        gCoordinator.SetSystemSignature<MainPlayerControlSystem>(signature);
+    }
+    main_player_control_system->Init();
+
+    auto main_player_position_getter_system = gCoordinator_.RegisterSystem<MainPlayerPositionGetterSystem>();
+    {
+        Signature signature;
+		signature.set(gCoordinator.GetComponentType<Player>());
+        signature.set(gCoordinator.GetComponentType<Motion>());
+        gCoordinator.SetSystemSignature<MainPlayerPositionGetterSystem>(signature);
+    }
+    main_player_position_getter_system->Init();
+
+    Entity main_player = gCoordinator.CreateEntity();
+    gCoordinator.AddComponent(main_player, Player{});
+    gCoordinator.AddComponent(
+        main_player,
+        Motion{
+            .position = {500.0, 500.0},
+            .velocity = {0.0,0.0},
+            .acceleration = {0.0, 0.0}}
+    );
+    //
+
     while (true) {
 
         // Steps 1 - 4 get evaluated at the beginnig of a chosen tick timer. But ignored until next game tick.
@@ -53,6 +96,12 @@ void Game::gameLoop() {
         auto current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
         std::pair<int, int> current_mouse_position = game_eventhandler_->getMousePosition();
 
+        //
+
+
+        // ECS
+        main_player_control_system->Update(current_action);
+        auto res = main_player_position_getter_system->get();
         //
 
         // 3. Other actors do their actions that also create a cause
