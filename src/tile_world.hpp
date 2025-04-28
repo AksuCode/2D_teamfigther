@@ -1,4 +1,6 @@
-#include  <cstdint>
+#include <cstdint>
+#include <utility>
+
 
 #include "config.hpp"
 
@@ -92,6 +94,41 @@ struct block_type_chunk_batch {
 // For now lets load the entire world to memory:
 struct solid_tile_world {
     solid_block_chunk_batch world[WORLD_BATCH_WIDTH][WORLD_BATCH_HEIGHT];
+
+    // Returns uint_8 which is a bit mask. If the bit mask is NOT 0, there is a collision.
+    // If the least significant bit is 1 there is collision on top.
+    // Second bit means collision on right. Third means bottom. Fourth means left.
+    // end_position gives the position when collision occures.
+    static uint8_t collisionResolution( const std::pair<double, double> starting_position,
+                                        const std::pair<double, double> hitbox,
+                                        const std::pair<double, double> movement_vector,
+                                        std::pair<double, double> & end_position 
+                                    ) {
+        const double half_width = hitbox.first / 2;
+        const double half_height = hitbox.second / 2;
+
+        /*
+        const std::pair<double, double> top_right = {starting_position.first + half_width, starting_position.second + half_height};
+        const std::pair<double, double> bot_right = {starting_position.first + half_width, starting_position.second - half_height};
+        const std::pair<double, double> bot_left = {starting_position.first - half_width, starting_position.second - half_height};
+        const std::pair<double, double> top_left = {starting_position.first - half_width, starting_position.second + half_height};
+        */
+
+        if (movement_vector.first > 0 && movement_vector.second > 0) {
+            const std::pair<double, double> top_right = {starting_position.first + half_width, starting_position.second + half_height};
+            const std::pair<double, double> candidate_end_position = {top_right.first + movement_vector.first, top_right.second + movement_vector.second};
+
+            // Linear equation:
+            const double A = top_right.second - candidate_end_position.second;
+            const double B = candidate_end_position.first - top_right.first;
+            const double C = top_right.first * candidate_end_position.second - candidate_end_position.first * top_right.second;
+
+            // Horizontal:
+
+        }
+
+        
+    }
 }
 
 struct type_tile_world {

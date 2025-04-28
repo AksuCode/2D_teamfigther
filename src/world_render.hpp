@@ -2,7 +2,6 @@
 #define WORLD_RENDER_HPP
 
 #include <utility>
-
 #include "MGL/include/game_window.hpp"
 
 // Actors
