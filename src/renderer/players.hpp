@@ -31,7 +31,7 @@ static const std::vector<std::vector<std::pair<uint16_t, uint16_t>>> player_id_t
     {{0, 5}, {5, 10}}
 };
 
-std::string getPlayerSpriteSheetPath(uint32_t player_id, uint32_t skin_id) {
+std::string getPlayerSpriteSheetPath(uint32_t player_id, uint32_t skin_id = 0) {
 
     std::string path = base_path;
 
