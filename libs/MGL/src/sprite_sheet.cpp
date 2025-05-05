@@ -1,6 +1,6 @@
 #include "../include/sprite_sheet.hpp"
 
-SpriteSheet::SpriteSheet(const char * bmp_path) : bmp_path_(bmp_path), loaded_(false), surface_(nullptr) {}
+SpriteSheet::SpriteSheet(std::string bmp_path) : bmp_path_(bmp_path), loaded_(false), surface_(nullptr) {}
 
 SpriteSheet::~SpriteSheet() {
     loaded_ = false;
@@ -8,7 +8,8 @@ SpriteSheet::~SpriteSheet() {
 }
 
 int SpriteSheet::load() {
-    surface_ = SDL_LoadBMP(bmp_path_);
+    const char * c_bmp_path = bmp_path_.c_str();
+    surface_ = SDL_LoadBMP(c_bmp_path);
     if (surface_ == NULL) {return -1;}
     loaded_ = true;
     return 0;

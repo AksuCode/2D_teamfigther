@@ -3,19 +3,23 @@
 
 #include "../config.hpp"
 
+#include "./players.hpp"
+
 #include <utility>
 #include <vector>
 #include <cstring>
+#include <cstdint>
 
 #include "MGL/include/sprite_render.hpp"
 
 class ActorRender {
     public:
-        ActorRender(GameWindow * gw, const char bmp_path[], std::pair<int, int> sprite_dimensions, std::vector<std::vector<std::pair<int, int>>> sprites_per_action);
+        ActorRender(GameWindow * gw, uint32_t player_id, uint32_t skin_id = 0);
         ~ActorRender();
 
         void loadSpriteSheet();
         void unloadSpriteSheet();
+        
         void loadSpriteRender();
         void unloadSpriteRender();
 
@@ -24,15 +28,14 @@ class ActorRender {
         
         int renderActor(const int action, int & action_sprite_counter, const std::pair<int, int> destination_position, const float scaling);
 
-    protected:
-        const char * bmp_path_;
+    private:
         SpriteSheet * ss_;
         bool ss_loaded_;
-        GameWindow * gw_;
         SpriteRender * sr_;
         bool sr_loaded_;
-        std::vector<std::vector<std::pair<int, int>>> sprites_per_action_;
-        std::pair<int, int> sprite_dimensions_;
+        uint16_t sprite_sheet_dimensions_;
+        std::pair<uint16_t, uint16_t> sprite_dimensions_;
+        std::vector<std::pair<uint16_t, uint16_t>> & action_sprite_indexing_;
 };
 
 #endif

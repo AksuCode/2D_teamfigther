@@ -1,18 +1,23 @@
 #include "./actor_render.hpp"
 
-ActorRender::ActorRender(GameWindow * gw, const char bmp_path[], std::pair<int, int> sprite_dimensions, std::vector<std::vector<std::pair<int, int>>> sprites_per_action) : gw_(gw), sprite_dimensions_(sprite_dimensions), sprites_per_action_(sprites_per_action) {
-    bmp_path_ = new char[strlen(original) + 1];
-    strcpy(bmp_path_, bmp_path);
+ActorRender::ActorRender(GameWindow * gw, uint32_t player_id, uint32_t skin_id = 0) {
 
-    assert((bmp_path_ != nullptr) && "bmp_path should be a valid c-string.");
+    std::string bmp_path = Players.getPlayerSpriteSheetPath(player_id, skin_id);
 
-    ss_ = new SpriteSheet(bmp_path_);
-    sr_ = new SpriteRender(gw_, sprite_dimensions_);
+    sprite_sheet_dimensions_ = getPlayerSpriteSheetDimension(player_id);
+
+    sprite_dimensions_ = Players.getPlayerSpriteDimensions(player_id);
+
+    action_sprite_indexing_ = getPlayerActionSpriteIndexingMapping(player_id);
+
+    assert((bmp_path != nullptr) && "bmp_path should be a valid c-string.");
+
+    ss_ = new SpriteSheet(bmp_path);
+    sr_ = new SpriteRender(gw, sprite_dimensions_);
     if (ss_ == nullptr || sr_ == nullptr) {exit(-1);}
 }
 
 ActorRender::~ActorRender() {
-    delete bmp_path_;
     delete sr_;
     delete ss_;
 }

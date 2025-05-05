@@ -6,54 +6,58 @@
 #include <vector>
 #include <utility>
 
-static const std::string base_path = "./assets/sprites";
+namespace Players {
 
-// Character length has to be less than the number in the right most brackert [][?].
-// While the first bracket is the number of stored strings.
-static const char player_id_to_spritesheet_directory_mapping[2][20] = {
-    "/wizard",
-    "/warlock"
-};
+    static const std::string base_path = "./assets/sprites";
 
-// Spritesheet dimensions should be a power of 2 and they MUST BE SQUARE.
-static const uint16_t player_id_to_spritesheet_dimension_mapping[2] = {
-    512,
-    512
-};
+    // Character length has to be less than the number in the right most brackert [][?].
+    // While the first bracket is the number of stored strings.
+    static const char player_id_to_spritesheet_directory_mapping[2][20] = {
+        "/wizard",
+        "/warlock"
+    };
 
-static const std::pair<uint16_t, uint16_t> player_id_to_sprite_dimension_mapping[2] = {
-    {100, 100},
-    {100, 100}
-};
+    // Spritesheet dimensions should be a power of 2 and they MUST BE SQUARE.
+    static const uint16_t player_id_to_spritesheet_dimension_mapping[2] = {
+        512,
+        512
+    };
 
-static const std::vector<std::vector<std::pair<uint16_t, uint16_t>>> player_id_to_player_action_sprite_indexing_mapping = {
-    {{0, 5}, {5, 10}},
-    {{0, 5}, {5, 10}}
-};
+    static const std::pair<uint16_t, uint16_t> player_id_to_sprite_dimension_mapping[2] = {
+        {100, 100},
+        {100, 100}
+    };
 
-std::string getPlayerSpriteSheetPath(uint32_t player_id, uint32_t skin_id = 0) {
+    static const std::vector<std::vector<std::pair<uint16_t, uint16_t>>> player_id_to_player_action_sprite_indexing_mapping = {
+        {{0, 5}, {5, 10}},
+        {{0, 5}, {5, 10}}
+    };
 
-    std::string path = base_path;
+    std::string getPlayerSpriteSheetPath(uint32_t player_id, uint32_t skin_id = 0) {
 
-    path += player_id_to_spritesheet_directory_mapping[player_id];
+        std::string path = base_path;
 
-    path += "/skin_";
-    path += skin_id;
-    path += ".bmp";
+        path += player_id_to_spritesheet_directory_mapping[player_id];
 
-    return path;
-}
+        path += "/skin_";
+        path += skin_id;
+        path += ".bmp";
 
-uint16_t getPlayerSpriteSheetDimension(uint32_t player_id) {
-    return player_id_to_spritesheet_dimension_mapping[player_id];
-}
+        return path;
+    }
 
-std::pair<uint16_t, uint16_t> getPlayerSpriteDimensions(uint32_t player_id) {
-    return player_id_to_sprite_dimension_mapping[player_id];
-}
+    uint16_t getPlayerSpriteSheetDimension(uint32_t player_id) {
+        return player_id_to_spritesheet_dimension_mapping[player_id];
+    }
 
-std::vector<std::pair<uint16_t, uint16_t>> & getPlayerActionSpriteIndexingMapping(uint32_t player_id) {
-    return player_id_to_player_action_sprite_indexing_mapping[player_id];
+    std::pair<uint16_t, uint16_t> getPlayerSpriteDimensions(uint32_t player_id) {
+        return player_id_to_sprite_dimension_mapping[player_id];
+    }
+
+    std::vector<std::pair<uint16_t, uint16_t>> & getPlayerActionSpriteIndexingMapping(uint32_t player_id) {
+        return player_id_to_player_action_sprite_indexing_mapping[player_id];
+    }
+
 }
 
 #endif

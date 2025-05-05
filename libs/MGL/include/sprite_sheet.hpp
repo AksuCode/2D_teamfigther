@@ -1,11 +1,13 @@
 #ifndef MGL_SPRITE_SHEET_HPP
 #define MGL_SPRITE_SHEET_HPP
 
+#include <string>
+
 #include <SDL2/SDL.h>
 
 class SpriteSheet {
     public:
-        SpriteSheet(const char * bmp_path);
+        SpriteSheet(std::string bmp_path);
         ~SpriteSheet();
         int load();
         void unload();
@@ -22,7 +24,7 @@ class SpriteSheet {
                                 int dst_rect_copy_pos_x,
                                 int dst_rect_copy_pos_y);
     private:
-        const char * bmp_path_;
+        std::string bmp_path_;
         bool loaded_;
         SDL_Surface * surface_;
 };
