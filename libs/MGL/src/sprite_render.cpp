@@ -1,6 +1,6 @@
 #include "../include/sprite_render.hpp"
 
-SpriteRender::SpriteRender(GameWindow * gw, const std::pair<int, int> sprite_dimensions) : gw_(gw), sprite_dimensions_(sprite_dimensions), texture_(nullptr), loaded_(false) {
+SpriteRender::SpriteRender(GameWindow * gw, SpriteSheet * sprite_sheet) : gw_(gw), sprite_sheet_(sprite_sheet), sprite_sheet_dimensions_(-1), sprite_dimensions_({-1, -1}), sprite_column_heigth_(-1), sprite_column_heigth_inverse_(-1.0), texture_(nullptr), loaded_(false) {
     sprite_center_point_ = SDL_Point{sprite_dimensions_.first / 2, sprite_dimensions_.second / 2};
     sprite_center_fpoint_ = SDL_FPoint{(float)sprite_dimensions_.first / 2, (float)sprite_dimensions_.second / 2};
 }
@@ -10,17 +10,31 @@ SpriteRender::~SpriteRender() {
     if (texture_ != nullptr) {SDL_DestroyTexture(texture_);}
 }
 
-int SpriteRender::load(SpriteSheet::Sprite_s sprite_sheet) {
-    texture_ = SDL_CreateTextureFromSurface((SDL_Renderer *)gw_->getRenderer(), (SDL_Surface *) sprite_sheet);
-    if (texture_ == NULL) {return -1;}
+int SpriteRender::load() {
+    if (!sprite_sheet_->isLoaded()) {return -1;}
+    SDL_Surface * surface = static_cast<SDL_Surface*>(sprite_sheet_->getSpriteSheet());
+    texture_ = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(gw_->getRenderer()), surface);
+    if (texture_ == NULL) {return -2;}
     loaded_ = true;
+    sprite_sheet_dimensions_ = sprite_sheet_->getSheetDimensions();
+    sprite_dimensions_ = sprite_sheet_->getSpriteDimensions();
+    sprite_column_heigth_ = (int)(sprite_sheet_dimensions_ / sprite_dimensions_.second);
+    sprite_column_heigth_inverse_ = (float)(1 / sprite_column_heigth_);
     return 0;
 }
 
 void SpriteRender::unload() {
     loaded_ = false;
+    sprite_sheet_dimensions_ = -1;
+    sprite_dimensions_ = {-1, -1};
+    sprite_column_heigth_ = -1;
+    sprite_column_heigth_inverse_ = -1.0;
     if (texture_ == nullptr) {return;}
     SDL_DestroyTexture(texture_);
+}
+
+bool SpriteRender::isLoaded() {
+    return loaded_;
 }
 
 int SpriteRender::setSpriteTransparency(Uint8 transparency) {
@@ -32,10 +46,14 @@ int SpriteRender::setSpriteToDefault() {
     return SDL_SetTextureBlendMode(texture_, SDL_BLENDMODE_NONE);
 }
 
-int SpriteRender::renderSprite(const std::pair<int, int> & sprite_index,
+int SpriteRender::renderSprite(const int sprite_index,
             const std::pair<int, int> & dst_pos) {
-    int src_x = sprite_dimensions_.first * sprite_index.first;
-    int src_y = sprite_dimensions_.second * sprite_index.second;
+
+    int col = sprite_column_heigth_inverse_ * sprite_index;
+    int row = sprite_index - sprite_column_heigth_ * col;
+
+    int src_x = col * sprite_dimensions_.first;
+    int src_y = row * sprite_dimensions_.second;
     src_rect_.w = sprite_dimensions_.first;
     src_rect_.h = sprite_dimensions_.second;
     src_rect_.x = src_x;
@@ -51,12 +69,16 @@ int SpriteRender::renderSprite(const std::pair<int, int> & sprite_index,
     return gw_->renderTexture(texture_, &src_rect_, &dst_rect_);
 }
 
-int SpriteRender::renderSpriteEx(const std::pair<int, int> & sprite_index,
+int SpriteRender::renderSpriteEx(const int sprite_index,
                 const std::pair<int, int> & dst_pos,
                 const double & angle,
                 const int & flip) {
-    int src_x = sprite_dimensions_.first * sprite_index.first;
-    int src_y = sprite_dimensions_.second * sprite_index.second;
+
+    int col = sprite_column_heigth_inverse_ * sprite_index;
+    int row = sprite_index - sprite_column_heigth_ * col;
+
+    int src_x = col * sprite_dimensions_.first;
+    int src_y = row * sprite_dimensions_.second;
     src_rect_.w = sprite_dimensions_.first;
     src_rect_.h = sprite_dimensions_.second;
     src_rect_.x = src_x;
@@ -72,11 +94,15 @@ int SpriteRender::renderSpriteEx(const std::pair<int, int> & sprite_index,
     return gw_->renderTextureEx(texture_, &src_rect_, &dst_rect_, angle, &sprite_center_point_, (SDL_RendererFlip)flip);
 }
 
-int SpriteRender::renderSpriteScaled(const std::pair<int, int> & sprite_index,
+int SpriteRender::renderSpriteScaled(const int sprite_index,
             const std::pair<int, int> & dst_pos,
             const float & scalar) {
-    int src_x = sprite_dimensions_.first * sprite_index.first;
-    int src_y = sprite_dimensions_.second * sprite_index.second;
+
+    int col = sprite_column_heigth_inverse_ * sprite_index;
+    int row = sprite_index - sprite_column_heigth_ * col;
+
+    int src_x = col * sprite_dimensions_.first;
+    int src_y = row * sprite_dimensions_.second;
     src_rect_.w = sprite_dimensions_.first;
     src_rect_.h = sprite_dimensions_.second;
     src_rect_.x = src_x;
@@ -92,13 +118,17 @@ int SpriteRender::renderSpriteScaled(const std::pair<int, int> & sprite_index,
     return gw_->renderTextureF(texture_, &src_rect_, &dst_frect_);
 }
 
-int SpriteRender::renderSpriteExScaled(const std::pair<int, int> & sprite_index,
+int SpriteRender::renderSpriteExScaled(const int sprite_index,
                 const std::pair<int, int> & dst_pos,
                 const float & scalar,
                 const double & angle,
                 const int & flip) {
-    int src_x = sprite_dimensions_.first * sprite_index.first;
-    int src_y = sprite_dimensions_.second * sprite_index.second;
+
+    int col = sprite_column_heigth_inverse_ * sprite_index;
+    int row = sprite_index - sprite_column_heigth_ * col;
+
+    int src_x = col * sprite_dimensions_.first;
+    int src_y = row * sprite_dimensions_.second;
     src_rect_.w = sprite_dimensions_.first;
     src_rect_.h = sprite_dimensions_.second;
     src_rect_.x = src_x;

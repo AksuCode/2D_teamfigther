@@ -7,41 +7,28 @@
 #include "MGL/include/game_window.hpp"
 #include "MGL/include/sprite_render.hpp"
 
-struct Renderer {
-    GameWindow * gw;
-
-    static void initializeRenderer(GameWindow * game_window) {
-        gw = new GameWindow();
-    }
-
-    static void closeRenderer() {
-        delete gw;
-    }
-
-    std::unordered_map<int, CharacterRenderer *> character_renderers;
-
-    static void addCharacterRender(int character_id, int skin_id) {
-        CharacterRenderer * cr = new CharacterRenderer();
-        int id = 1000 * character_id + skin_id;
-        character_renderers.insert({id, cr});
-    }
-
-}
+#include "./player_render.hpp"
 
 class Renderer {
     public:
-        WorldRender(GameWindow * game_window);
-        ~WorldRender();
+        Renderer(GameWindow * gw);
+        
+        int createPlayerRender(const int player_id, const int skin_id);
+        int loadPlayer(const int player_id, const int skin_id);
+        int renderPlayer(const int player_id,
+                        const int skin_id, 
+                        const int action,
+                        int & action_sprite_counter,
+                        const std::pair<int, int> destination_position,
+                        const float scaling);
+
         void renderWorld();
         void loadWorld();
 
     private:
-        GameWindow * game_window_;
+        GameWindow * gw_;
 
-        WizardRender * wr_;
-        int wr_action_counter = 0;
-
-        void renderW(WizardRender * w_render, std::pair<int, int> destination_position, float scaling);
+        std::unordered_map<int, PlayerRender *> players_;
 };
 
 #endif

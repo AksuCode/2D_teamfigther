@@ -2,16 +2,21 @@
 #define MGL_SPRITE_SHEET_HPP
 
 #include <string>
+#include <cstring>
+#include <utility>
 
 #include <SDL2/SDL.h>
 
 class SpriteSheet {
     public:
-        SpriteSheet(std::string bmp_path);
+        SpriteSheet(const std::string bmp_path, const int sprite_sheet_dimensions, const std::pair<int, int> sprite_dimensions);
         ~SpriteSheet();
         int load();
         void unload();
         int refresh();
+        bool isLoaded();
+        int getSheetDimensions();
+        std::pair<int,int> getSpriteDimensions();
         typedef SDL_Surface* Sprite_s;
         Sprite_s getSpriteSheet();
         int layerSpriteSheetWithAnother(Sprite_s src_sprite_sheet,
@@ -24,9 +29,12 @@ class SpriteSheet {
                                 int dst_rect_copy_pos_x,
                                 int dst_rect_copy_pos_y);
     private:
-        std::string bmp_path_;
+        char c_str_bmp_path_[50];
         bool loaded_;
         SDL_Surface * surface_;
+
+        int sprite_sheet_dimensions_;
+        const std::pair<int, int> sprite_dimensions_;
 };
 
 #endif

@@ -15,10 +15,11 @@ class SpriteRender {
         // SDL_SetTextureColorMod
 
         
-        SpriteRender(GameWindow * gw, std::pair<int, int> sprite_dimensions);
+        SpriteRender(GameWindow * gw, SpriteSheet * sprite_sheet);
         ~SpriteRender();
-        int load(SpriteSheet::Sprite_s sprite_sheet);
+        int load();
         void unload();
+        bool isLoaded();
 
         /*
         * Makes generated sprites transparent in the scale from 0-255.
@@ -39,7 +40,7 @@ class SpriteRender {
         * dst_pos - First integer is a x position of the sprite in the destination. Second integer is a corresponding y position.
         *   The poistion given should be the center position of the sprite in destination.
         */
-        int renderSprite(const std::pair<int, int> & sprite_index, const std::pair<int, int> & dst_pos);
+        int renderSprite(const int sprite_index, const std::pair<int, int> & dst_pos);
 
         /*
         * Renders given sprite to the GameWindow pointed by gw_
@@ -50,7 +51,7 @@ class SpriteRender {
         * angle - An angle of degrees of rotation applied to sprite around its center in clockwise direction.
         * flip - Defines the flipping action applied to sprite. No flip: 0x00000000, horizontal flip: 0x00000001 and vertical flip: 0x00000002.
         */
-        int renderSpriteEx(const std::pair<int, int> & sprite_index,
+        int renderSpriteEx(const int sprite_index,
                 const std::pair<int, int> & dst_pos,
                 const double & angle,
                 const int & flip);
@@ -63,7 +64,9 @@ class SpriteRender {
         *   The poistion given should be the center position of the sprite in destination.
         * scalar - Scaling multiplier of the sprite.
         */
-        int renderSpriteScaled(const std::pair<int, int> & sprite_index, const std::pair<int, int> & dst_pos, const float & scalar);
+        int renderSpriteScaled(const int sprite_index,
+            const std::pair<int, int> & dst_pos,
+            const float & scalar);
 
         /*
         * Renders given scaled sprite to the GameWindow pointed by gw_
@@ -75,7 +78,7 @@ class SpriteRender {
         * angle - An angle of degrees of rotation applied to sprite around its center in clockwise direction.
         * flip - Defines the flipping action applied to sprite. No flip: 0x00000000, horizontal flip: 0x00000001 and vertical flip: 0x00000002.
         */
-        int renderSpriteExScaled(const std::pair<int, int> & sprite_index,
+        int renderSpriteExScaled(const int sprite_index,
                 const std::pair<int, int> & dst_pos,
                 const float & scalar,
                 const double & angle,
@@ -83,11 +86,19 @@ class SpriteRender {
 
     private:
         GameWindow * gw_;
-        const std::pair<int, int> sprite_dimensions_;
+
+        SpriteSheet * sprite_sheet_;
+        int sprite_sheet_dimensions_;
+        std::pair<int, int> sprite_dimensions_;
+        int sprite_column_heigth_;
+        float sprite_column_heigth_inverse_;
+
         SDL_Point sprite_center_point_;
         SDL_FPoint sprite_center_fpoint_;
         SDL_Texture * texture_;
+
         bool loaded_;
+
         SDL_Rect src_rect_;
         SDL_Rect dst_rect_;
         SDL_FRect dst_frect_;

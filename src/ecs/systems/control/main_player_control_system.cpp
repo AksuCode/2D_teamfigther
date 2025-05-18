@@ -2,6 +2,7 @@
 
 #include "../../components/actor/main_player.hpp"
 #include "../../components/physics/motion.hpp"
+
 #include "../../core/coordinator.hpp"
 
 extern Coordinator gCoordinator;
@@ -9,6 +10,7 @@ extern Coordinator gCoordinator;
 void MainPlayerControlSystem::Update(const std::array<bool, (int)ActionCode::ACTION_CODE_COUNT> & actions) {
 	
 	auto& entity = *mEntities.begin();
+
 	auto& player = gCoordinator.GetComponent<MainPlayer>(entity);
 	auto& motion = gCoordinator.GetComponent<Motion>(entity);
 

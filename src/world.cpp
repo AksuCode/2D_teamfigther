@@ -6,9 +6,6 @@ World::World(int width, int heigth) : width_(width), heigth_(heigth) {
 
 World::~World() {
     delete block_world_;
-    for (auto it = actors_.begin(); it != actors_.end(); it++) {
-        delete (*it);
-    }
 }
 
 int World::getWidth() {
@@ -22,5 +19,3 @@ int World::getHeigth() {
 BlockWorld * World::getBlockWorld() {
     return block_world_;
 }
-
-std::vector<Actor *> & World::getActors() { return actors_; }

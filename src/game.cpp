@@ -21,7 +21,7 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
     game_window_ = new GameWindow();
 
     world_ = new World(6000, 1000);
-    world_render_ = new WorldRender(game_window_);
+    renderer_ = new Renderer(game_window_);
 
     // ECS
     gCoordinator.Init();
@@ -35,6 +35,7 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
     gCoordinator.RegisterComponent<MainPlayer>();
     gCoordinator.RegisterComponent<Creature>();
     gCoordinator.RegisterComponent<Wizard>();
+    gCoordinator.RegisterComponent<R_Player>();
     //
 }
 
@@ -43,7 +44,7 @@ Game::~Game() {
     delete game_action_;
     delete game_window_;
     delete world_;
-    delete world_render_;
+    delete renderer_;
     SDL_Quit();
 }
 
@@ -54,8 +55,6 @@ void Game::gameLoop() {
     //
 
     game_window_->createOrUpdateWindow(false, 1000, 1000);
-
-    world_render_->loadWorld();
 
     // ECS
     auto main_player_control_system = gCoordinator.RegisterSystem<MainPlayerControlSystem>();
@@ -76,6 +75,15 @@ void Game::gameLoop() {
     }
     main_player_position_getter_system->Init();
 
+    auto player_render_system = gCoordinator.RegisterSystem<PlayerRenderSystem>();
+    {
+        Signature signature;
+		signature.set(gCoordinator.GetComponentType<R_Player>());
+        signature.set(gCoordinator.GetComponentType<Motion>());
+        gCoordinator.SetSystemSignature<MainPlayerPositionGetterSystem>(signature);
+    }
+    player_render_system->Init(renderer_);
+
     Entity main_player = gCoordinator.CreateEntity();
     gCoordinator.AddComponent(main_player, MainPlayer{});
     gCoordinator.AddComponent(
@@ -85,6 +93,12 @@ void Game::gameLoop() {
             .velocity = {0.0,0.0},
             .acceleration = {0.0, 0.0}}
     );
+    gCoordinator.AddComponent(main_player, R_Player{});
+
+
+
+    player_render_system->CreatePlayerRenders();
+    player_render_system->LoadPlayerRenders();
     //
 
 
@@ -120,7 +134,8 @@ void Game::gameLoop() {
 
         // 5. World state is rendered as image + animations (actions in effect)
         if (animation_scheduler->executeOnSchedule()) {
-            world_render_->renderWorld();
+            //world_render_->renderWorld();
+            player_render_system->Render();
             game_window_->updateWindow();
             std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl; 
         }
