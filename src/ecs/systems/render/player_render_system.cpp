@@ -41,6 +41,7 @@ void PlayerRenderSystem::Render() {
 		auto& r_player = gCoordinator.GetComponent<R_Player>(entity);
 
 		const std::pair<double, double> position = motion.position;
+
 		renderer_->renderPlayer(r_player.player_id, r_player.skin_id, 0, r_player.action_sprite_counter, motion.position, 1.0f);
 	}
 }

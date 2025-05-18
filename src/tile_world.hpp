@@ -53,11 +53,6 @@ struct solid_block_chunk {
     }
 }
 
-// Block type chunk is 32 x 32 bytemap, where a byte is an id of the type of block. So there is a limit of 256 block types.
-struct block_type_chunk {
-    uint8_t data[32][32];
-}
-
 // A batch of solid block chunks
 struct solid_block_chunk_batch {
     solid_block_chunk batch[BATCH_DIMENSION][BATCH_DIMENSION];
@@ -84,11 +79,6 @@ struct solid_block_chunk_batch {
         assert(BATCH_DIMENSION <= i);
         return batch[j][i];
     } 
-}
-
-// A batch of block type chunks
-struct block_type_chunk_batch {
-    block_type_chunk batch[BATCH_DIMENSION][BATCH_DIMENSION];
 }
 
 // For now lets load the entire world to memory:
@@ -129,6 +119,16 @@ struct solid_tile_world {
 
         
     }
+}
+
+// Block type chunk is 32 x 32 bytemap, where a byte is an id of the type of block. So there is a limit of 256 block types.
+struct block_type_chunk {
+    uint8_t data[32][32];
+}
+
+// A batch of block type chunks
+struct block_type_chunk_batch {
+    block_type_chunk batch[BATCH_DIMENSION][BATCH_DIMENSION];
 }
 
 struct type_tile_world {

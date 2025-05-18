@@ -20,7 +20,6 @@ Game::Game(SDL_LogOutputFunction sdl_logOutputFunction) {
     game_action_ = new Action();
     game_window_ = new GameWindow();
 
-    world_ = new World(6000, 1000);
     renderer_ = new Renderer(game_window_);
 
     // ECS
@@ -43,7 +42,6 @@ Game::~Game() {
     delete game_eventhandler_;
     delete game_action_;
     delete game_window_;
-    delete world_;
     delete renderer_;
     SDL_Quit();
 }
@@ -51,7 +49,8 @@ Game::~Game() {
 void Game::gameLoop() {
 
     // Jotain kivaa.
-    MGL_SchedulerMs * animation_scheduler = new MGL_SchedulerMs(1000);
+    MGL_Timing * gamelogic_timer = new MGL_Timing();
+    MGL_SchedulerMs * animation_scheduler = new MGL_SchedulerMs(15);
     //
 
     game_window_->createOrUpdateWindow(false, 1000, 1000);
@@ -104,42 +103,48 @@ void Game::gameLoop() {
 
     while (true) {
 
-        // Steps 1 - 4 get evaluated at the beginnig of a chosen tick timer. But ignored until next game tick.
+        if (gamelogic_timer->computeNextLogic()) {
+            // Steps 1 - 4 get evaluated at the beginnig of a chosen tick timer. But ignored until next game tick.
 
-        // 1. system takes external input
-        game_eventhandler_->pollEvent();
-        //
+            // 1. system takes external input
+            game_eventhandler_->pollEvent();
+            //
 
-        // 2. External input converted to player actions that create a cause to the world
-        // Turn inputs to player actions with player actions class which in turn somewhow changes player state
-        // Maybe pass reference to player actions object to gamestate class ro something
-        auto current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
-        std::pair<int, int> current_mouse_position = game_eventhandler_->getMousePosition();
+            // 2. External input converted to player actions that create a cause to the world
+            // Turn inputs to player actions with player actions class which in turn somewhow changes player state
+            // Maybe pass reference to player actions object to gamestate class ro something
+            auto current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
+            std::pair<int, int> current_mouse_position = game_eventhandler_->getMousePosition();
 
-        //
+            //
 
 
-        // ECS
-        main_player_control_system->Update(current_action);
-        auto res = main_player_position_getter_system->get();
-        //
+            // ECS
+            main_player_control_system->Update(current_action);
+            //
 
-        // 3. Other actors do their actions that also create a cause
+            // 3. Other actors do their actions that also create a cause
 
-        //
+            //
 
-        // 4. world state and cause are evaluated against game logic and new world state generated as effect
+            // 4. world state and cause are evaluated against game logic and new world state generated as effect
 
-        //
+            //
 
-        // 5. World state is rendered as image + animations (actions in effect)
+            std::cout << "Game logic" << std::endl;
+        }
+
+        gamelogic_timer->startFrameRenderTimer();
         if (animation_scheduler->executeOnSchedule()) {
+            // 5. World state is rendered as image + animations (actions in effect)
             //world_render_->renderWorld();
             player_render_system->Render();
             game_window_->updateWindow();
+            auto res = main_player_position_getter_system->get();
             std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl; 
+            //
         }
-        // 
+        gamelogic_timer->endFrameRenderTimer();
     }
 
 }

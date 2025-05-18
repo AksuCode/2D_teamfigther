@@ -10,8 +10,6 @@
 #include "MGL/include/game_window.hpp"
 #include "MGL/include/mgl_time.hpp"
 
-#include "./world.hpp"
-
 #include "renderer/renderer.hpp"
 
 #include "ecs/core/coordinator.hpp"
@@ -47,7 +45,6 @@ class Game {
         Action * game_action_;
         GameWindow * game_window_;
 
-        World * world_;
         Renderer * renderer_;
 };
 

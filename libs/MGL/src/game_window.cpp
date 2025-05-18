@@ -123,6 +123,8 @@ int GameWindow::renderTextureExF(SDL_Texture * texture,
 
 void GameWindow::updateWindow() {
   SDL_RenderPresent(renderer_);
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+  SDL_RenderClear(renderer_);
 }
 
 const GameWindow::GW_Renderer GameWindow::getRenderer() {
