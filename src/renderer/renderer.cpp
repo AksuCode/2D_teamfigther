@@ -34,6 +34,8 @@ int Renderer::renderPlayer(const int player_id,
     return 0;
 }
 
-void Renderer::renderWorld() {}
+void Renderer::renderWorld(solid_tile_world & world) {
+    
+}
 
 void Renderer::loadWorld() {}

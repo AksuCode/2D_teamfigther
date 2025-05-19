@@ -85,10 +85,31 @@ struct solid_block_chunk_batch {
 struct solid_tile_world {
     solid_block_chunk_batch world[WORLD_BATCH_WIDTH][WORLD_BATCH_HEIGHT];
 
+    void worldGenerate() {
+        for(int w = 0; w < WORLD_BATCH_WIDTH; w++) {
+            for (int h = WORLD_BATCH_HEIGHT / 2; h < WORLD_BATCH_HEIGHT; h++) {
+                solid_block_chunk_batch & chunk_batch = world[w][h];
+                solid_block_chunk & chunk_batch_data = chunk_batch.batch;
+                for (int j = 0; j < BATCH_DIMENSION; j++) {
+                    for (int i = 0; i < BATCH_DIMENSION; i++) {
+                        solid_block_chunk & block_chunk = chunk_batch_data[j][i];
+                        uint32_t & block_chunk_data = block_chunk.data
+                        for (int k = 0; k < 32; k++) {
+                            data[k] = UINT32_MAX;
+                        }
+                        block_chunk.measureChunkSolidity();
+                    }
+                }
+                chunk_batch.measureBatchSolidity();
+            }
+        }
+    }
+
     // Returns uint_8 which is a bit mask. If the bit mask is NOT 0, there is a collision.
     // If the least significant bit is 1 there is collision on top.
     // Second bit means collision on right. Third means bottom. Fourth means left.
     // end_position gives the position when collision occures.
+    /*
     static uint8_t collisionResolution( const std::pair<double, double> starting_position,
                                         const std::pair<double, double> hitbox,
                                         const std::pair<double, double> movement_vector,
@@ -97,12 +118,10 @@ struct solid_tile_world {
         const double half_width = hitbox.first / 2;
         const double half_height = hitbox.second / 2;
 
-        /*
-        const std::pair<double, double> top_right = {starting_position.first + half_width, starting_position.second + half_height};
-        const std::pair<double, double> bot_right = {starting_position.first + half_width, starting_position.second - half_height};
-        const std::pair<double, double> bot_left = {starting_position.first - half_width, starting_position.second - half_height};
-        const std::pair<double, double> top_left = {starting_position.first - half_width, starting_position.second + half_height};
-        */
+        //const std::pair<double, double> top_right = {starting_position.first + half_width, starting_position.second + half_height};
+        //const std::pair<double, double> bot_right = {starting_position.first + half_width, starting_position.second - half_height};
+        //const std::pair<double, double> bot_left = {starting_position.first - half_width, starting_position.second - half_height};
+        //const std::pair<double, double> top_left = {starting_position.first - half_width, starting_position.second + half_height};
 
         if (movement_vector.first > 0 && movement_vector.second > 0) {
             const std::pair<double, double> top_right = {starting_position.first + half_width, starting_position.second + half_height};
@@ -119,6 +138,7 @@ struct solid_tile_world {
 
         
     }
+    */
 }
 
 // Block type chunk is 32 x 32 bytemap, where a byte is an id of the type of block. So there is a limit of 256 block types.

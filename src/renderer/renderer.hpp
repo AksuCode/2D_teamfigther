@@ -9,6 +9,8 @@
 
 #include "./player_render.hpp"
 
+#include "./tile_world.hpp"
+
 class Renderer {
     public:
         Renderer(GameWindow * gw);
