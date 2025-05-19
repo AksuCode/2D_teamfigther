@@ -12,6 +12,8 @@
 
 #include "renderer/renderer.hpp"
 
+#include "world.hpp"
+
 #include "ecs/core/coordinator.hpp"
 
 #include "ecs/components/physics/gravity.hpp"

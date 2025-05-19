@@ -9,7 +9,8 @@
 
 #include "./player_render.hpp"
 
-#include "./tile_world.hpp"
+#include "./world_render.hpp"
+#include "../world.hpp"
 
 class Renderer {
     public:
@@ -24,13 +25,16 @@ class Renderer {
                         const std::pair<int, int> destination_position,
                         const float scaling);
 
-        void renderWorld();
-        void loadWorld();
+        int createWorldRender(solid_world * sw);
+        int updateWorldRender();
+        int renderWorld();
 
     private:
         GameWindow * gw_;
 
         std::unordered_map<int, PlayerRender *> players_;
+        
+        WorldRender * wr_;
 };
 
 #endif

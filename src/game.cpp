@@ -53,7 +53,7 @@ void Game::gameLoop() {
     MGL_SchedulerMs * animation_scheduler = new MGL_SchedulerMs(15);
     //
 
-    game_window_->createOrUpdateWindow(false, 1000, 1000);
+    game_window_->createOrUpdateWindow(false, 2000, 1000);
 
     // ECS
     auto main_player_control_system = gCoordinator.RegisterSystem<MainPlayerControlSystem>();
@@ -101,6 +101,16 @@ void Game::gameLoop() {
     //
 
 
+    //
+    solid_world * sw = new solid_world;
+    sw->worldGenerate();
+    //
+
+    //
+    renderer_->createWorldRender(sw);
+    renderer_->updateWorldRender();
+    //
+
     while (true) {
 
         if (gamelogic_timer->computeNextLogic()) {
@@ -138,6 +148,8 @@ void Game::gameLoop() {
         if (animation_scheduler->executeOnSchedule()) {
             // 5. World state is rendered as image + animations (actions in effect)
             //world_render_->renderWorld();
+            renderer_->updateWorldRender();
+            renderer_->renderWorld();
             player_render_system->Render();
             game_window_->updateWindow();
             auto res = main_player_position_getter_system->get();

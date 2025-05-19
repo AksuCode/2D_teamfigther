@@ -34,8 +34,18 @@ int Renderer::renderPlayer(const int player_id,
     return 0;
 }
 
-void Renderer::renderWorld(solid_tile_world & world) {
-    
+int Renderer::createWorldRender(solid_world * sw) {
+    wr_ = new WorldRender(gw_, sw);
+    wr_->initWorldRender();
+    return 0;
 }
 
-void Renderer::loadWorld() {}
+int Renderer::updateWorldRender() {
+    wr_->updateWorldRender();
+    return 0;
+}
+
+int Renderer::renderWorld() {
+    wr_->renderWorld();
+    return 0;
+}
