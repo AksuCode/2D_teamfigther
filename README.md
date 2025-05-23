@@ -1,4 +1,8 @@
-# Game of life
+# Dependencies and configurations
+- SDL2
+- Boost
+
+# Some new game
 
 Execute build_app.sh to build application normally.
 The built default executable can be found from build.

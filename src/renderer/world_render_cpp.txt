@@ -1,0 +1,192 @@
+#include "./world_render.hpp"
+
+WorldRender::WorldRender(GameWindow * gw, solid_world * sw, std::pair<double, double> * world_point_at_viewport_focal_point) : gw_(gw), sw_(sw), world_point_at_viewport_focal_point_(world_point_at_viewport_focal_point) {}
+
+void WorldRender::InitAndReconfig() {
+    int window_w = gw_->getWindowWidth();
+    int window_h = gw_->getWindowHeigth();
+
+    int max_dimention = std::max(window_w, window_h);
+
+    std::cout << "Max dimention: " << max_dimention << std::endl;
+
+    texture_dimention_ = std::pow(2, std::ceil(std::log2(max_dimention)));
+
+    std::cout << "Texture dimention: " << texture_dimention << std::endl;
+
+    texture_dimention_in_chunks_ = texture_dimention / CHUNK_DIMENSION;
+
+    std::cout << "Texture dimention in chunks: " << texture_dimention_in_chunks << std::endl;
+
+    for (int i = 0; i < WORLD_RENDER_OBJECT_MATRIX_DIMENTION; i++) {
+        boost::circular_buffer<WorldRenderObject> col = boost::circular_buffer<WorldRenderObject>(WORLD_RENDER_OBJECT_MATRIX_DIMENTION);
+        for (int j = 0; j < WORLD_RENDER_OBJECT_MATRIX_DIMENTION; j++) {
+            SDL_Texture * tx = createChunkTexture(); 
+            col.push_back(WorldRenderObject(tx));
+        }
+        wro_circular_matrix_.push_back(col);
+    }
+
+}
+
+void WorldRender::renderWhole() {
+    
+}
+
+SDL_Texture * WorldRender::createChunkTexture() {
+    SDL_Texture * res = SDL_CreateTexture(static_cast<SDL_Renderer*>(gw_->getRenderer()), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, texture_dimention_, texture_dimention_);
+    return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void WorldRender::InitAndReconfig() {
+    int width = gw_->getWindowWidth();
+    int height = gw_->getWindowHeigth();
+    int viewport_width_in_chunks = width / CHUNK_DIMENSION;
+    int viewport_height_in_chunks = height / CHUNK_DIMENSION;
+
+    matrix_width_ = 2 * viewport_width_in_chunks;
+    matrix_height_ = 2 * viewport_height_in_chunks;
+
+    chunk_ro_circular_matrix_ = boost::circular_buffer<boost::circular_buffer<ChunkRenderObject>>(matrix_width_);
+
+    for (int w = 0; w < matrix_width_; w++) {
+        boost::circular_buffer<ChunkRenderObject> col = boost::circular_buffer<ChunkRenderObject>(matrix_height_);
+        for (int h = 0; h < matrix_height_; h++) {
+            col.push_back(ChunkRenderObject(nullptr, nullptr));
+        }
+        chunk_ro_circular_matrix_.push_back(col);
+    }
+}
+
+int WorldRender::update() {
+    return 0;
+}
+
+int WorldRender::refreshMatrixData() {
+    int chunk_indx_w = (int)((world_point_at_viewport_focal_point_->first / (double)CHUNK_DIMENSION) - (double)(matrix_width_ / 2));
+    std::cout << "W: Chunk indx: " << chunk_indx_w << std::endl;
+    for (auto it = chunk_ro_circular_matrix_.begin(); it != chunk_ro_circular_matrix_.end(); it++) {
+        auto& col = *it;
+        int chunk_indx_h = (int)((world_point_at_viewport_focal_point_->second / (double)CHUNK_DIMENSION) - (double)(matrix_height_ / 2));
+        for (auto jt = col.begin(); jt != col.end(); jt++) {
+            ChunkRenderObject & cro = *jt;
+            if (chunk_indx_w < WORLD_CHUNK_WIDTH && 0 <= chunk_indx_w && chunk_indx_h < WORLD_CHUNK_HEIGHT && 0 <= chunk_indx_h) {
+                solid_block_chunk * sbc = &sw_->world[chunk_indx_w][chunk_indx_h];
+                uint32_t * chunk_data = sbc->data;
+                SDL_Texture * texture = createChunkTexture();
+                if (texture == NULL) {return -1;}
+                if (populateChunkTexture(chunk_data, texture) != 0) {return -2;}
+                cro = ChunkRenderObject(sbc, texture);
+            } else {
+                SDL_Texture * texture = createChunkTexture();
+                if (texture == NULL) {return -1;}
+                if (populateOutOfBoundsChunkTexture(texture) != 0) {return -2;}
+                cro = ChunkRenderObject(nullptr, texture);
+            }
+            chunk_indx_h++;
+            std::cout << "H: Chunk indx: " << chunk_indx_h << std::endl;
+        }
+        chunk_indx_w++;
+    }
+    return 0;
+}
+
+void WorldRender::renderWorld() {
+    double viewport_pos_w = world_point_at_viewport_focal_point_->first - (double)(CHUNK_DIMENSION * (matrix_width_ / 2));
+    for (auto it = chunk_ro_circular_matrix_.begin(); it != chunk_ro_circular_matrix_.end(); it++) {
+        auto& col = *it;
+        double viewport_pos_h = world_point_at_viewport_focal_point_->second - (double)(CHUNK_DIMENSION * (matrix_height_ / 2));
+        for (auto jt = col.begin(); jt != col.end(); jt++) {
+            ChunkRenderObject & cro = *jt;
+            if (cro.texture == nullptr) {
+                std::cout << "WorldRender::renderWorld(): Texture is nullptr even though it should't be at this point." << std::endl;
+                continue;
+            }
+            SDL_Texture * tx = cro.texture;
+            const std::pair<double, double> viewport_position = {viewport_pos_w, viewport_pos_h};
+            renderChunkTexture(tx, viewport_position);
+            viewport_pos_h += (double)CHUNK_DIMENSION;
+        }
+        viewport_pos_w += (double)CHUNK_DIMENSION;
+    }
+}
+
+SDL_Texture * WorldRender::createChunkTexture() {
+    SDL_Texture * res = SDL_CreateTexture(static_cast<SDL_Renderer*>(gw_->getRenderer()), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, CHUNK_DIMENSION, CHUNK_DIMENSION);
+    return res;
+}
+
+int WorldRender::populateChunkTexture(const uint32_t * chunk_data, SDL_Texture * texture) {
+    Uint32* pixels;
+    int pitch;
+
+    // Assume texture is created with SDL_TEXTUREACCESS_STREAMING
+    if (SDL_LockTexture(texture, NULL, (void**)&pixels, &pitch) != 0) {
+        return -1;
+    }
+
+    // pitch is in bytes, so divide by 4 for 32-bit pixels (Uint32)
+    int width = pitch / 4;
+    for (int w = 0; w < CHUNK_DIMENSION; ++w) {
+        uint32_t col = chunk_data[w];
+        for (int h = 0; h < CHUNK_DIMENSION; ++h) {
+            uint32_t mask = 1 << w;
+            uint32_t bit_value = (col & mask) >> w;
+            Uint32 pixel = static_cast<Uint32>(0x00FF00FF * bit_value);
+            pixels[w * width + h] = pixel;
+        }
+    }
+
+    SDL_UnlockTexture(texture);
+    return 0;
+}
+
+int WorldRender::populateOutOfBoundsChunkTexture(SDL_Texture * texture) {
+    Uint32* pixels;
+    int pitch;
+
+    // Assume texture is created with SDL_TEXTUREACCESS_STREAMING
+    if (SDL_LockTexture(texture, NULL, (void**)&pixels, &pitch) != 0) {
+        return -1;
+    }
+
+    // pitch is in bytes, so divide by 4 for 32-bit pixels (Uint32)
+    int width = pitch / 4;
+    for (int w = 0; w < CHUNK_DIMENSION; ++w) {
+        for (int h = 0; h < CHUNK_DIMENSION; ++h) {
+            Uint32 pixel = static_cast<Uint32>(0xFF012DFF);
+            pixels[w * width + h] = pixel;
+        }
+    }
+
+    SDL_UnlockTexture(texture);
+    return 0;
+}
+
+int WorldRender::renderChunkTexture(SDL_Texture * texture, const std::pair<double, double> viewport_position) {
+    SDL_FRect dst_frect;
+    dst_frect.w = (float)CHUNK_DIMENSION;
+    dst_frect.h = (float)CHUNK_DIMENSION;
+    dst_frect.x = (float)viewport_position.first;
+    dst_frect.y = (float)viewport_position.second;
+    return gw_->renderTextureF(texture, NULL, &dst_frect);
+}

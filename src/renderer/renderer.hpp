@@ -15,26 +15,32 @@
 class Renderer {
     public:
         Renderer(GameWindow * gw);
-        
+
+        void Init();
+    
+        void updateViewportFocalPointWorldPoint(std::pair<double, double> world_point_as_viewport_focal_point);
+
         int createPlayerRender(const int player_id, const int skin_id);
         int loadPlayer(const int player_id, const int skin_id);
         int renderPlayer(const int player_id,
                         const int skin_id, 
                         const int action,
                         int & action_sprite_counter,
-                        const std::pair<int, int> destination_position,
+                        const std::pair<double, double> world_point,
                         const float scaling);
 
-        int createWorldRender(solid_world * sw);
-        int updateWorldRender();
-        int renderWorld();
+        void createWorldRender(solid_world * sw);
+        void updateWorldRender();
+        void renderWorld();
 
     private:
         GameWindow * gw_;
+        std::pair<int, int> viewport_middle_point_;
 
         std::unordered_map<int, PlayerRender *> players_;
         
         WorldRender * wr_;
+        std::pair<double, double> world_point_as_viewport_focal_point_ = {0.0, 0.0};
 };
 
 #endif

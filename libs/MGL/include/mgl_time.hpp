@@ -12,22 +12,22 @@ class MGL_Timing {
         bool computeNextLogic();
     private:
         const int tick_rate_;
-        int tick_duration_microseconds_;
+        int64_t tick_duration_microseconds_;
         std::chrono::steady_clock::time_point frame_beginning_;
-        std::array<int, 10> last_10_frame_render_durations_ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        int circular_ptr_ = 0;
-        const float average_denominator_ = 0.1f;
-        int last_10_frame_render_duration_sum_;
+
+        int64_t largest_frame_duration_ = 0;
+        int largest_frame_life_counter_ = 0;
+
         std::chrono::steady_clock::time_point logic_beginning_;
 };
 
 class MGL_SchedulerMs {
     public:
-        MGL_SchedulerMs(int sheduler_length_ms);
+        MGL_SchedulerMs(int64_t sheduler_length_ms);
         bool executeOnSchedule();
     private:
         std::chrono::steady_clock::time_point beginning_;
-        int sheduler_length_ms_;
+        int64_t sheduler_length_ms_;
 };
 
 class MGL_Timer {

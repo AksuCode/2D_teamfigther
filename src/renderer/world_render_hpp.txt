@@ -3,42 +3,58 @@
 
 #include <cstdint>
 #include <utility>
+#include <cmath>
 
 #include <SDL2/SDL.h>
+#include <boost/circular_buffer.hpp>
 
 #include "MGL/include/game_window.hpp"
 
 #include "../config.hpp"
 #include "../world.hpp"
 
+
+#define WORLD_RENDER_OBJECT_MATRIX_DIMENTION 3
+struct WorldRenderObject {
+    SDL_Texture * wro_texture;
+}
+
 class WorldRender {
     public:
         WorldRender(GameWindow * gw, solid_world * sw, std::pair<double, double> * world_point_at_viewport_focal_point);
-        ~WorldRender();
 
         void InitAndReconfig();
 
-        void InitialDraw();
+        int update();
+
+        int refreshMatrixData();
 
         void renderWorld();
 
     private:
         GameWindow * gw_;
         solid_world * sw_;
-        SDL_Texture * texture_;
-
-        std::pair<int, int> viewport_middle_point_;
 
         std::pair<double, double> * world_point_at_viewport_focal_point_;
         std::pair<double, double> previous_world_point_at_viewport_focal_point_; 
 
-        int viewport_width_;
-        int viewport_height_;
+        int texture_dimention_;
+        int texture_dimention_in_chunks_;
 
-        int texture_width_;
-        int texture_height_;
+        boost::circular_buffer<boost::circular_buffer<WorldRenderObject>> wro_circular_matrix_;
+
+
+
+
 
         SDL_Texture * createChunkTexture();
+
+        int populateChunkTexture(const uint32_t * chunk_data, SDL_Texture * texture);
+
+        int populateOutOfBoundsChunkTexture(SDL_Texture * texture);
+
+        int renderChunkTexture(SDL_Texture * texture, const std::pair<double, double> viewport_position);
+
 };
 
 #endif

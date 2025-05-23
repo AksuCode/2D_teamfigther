@@ -5,17 +5,18 @@
 
 #include "config.hpp"
 
-#define CHUNK_WIDTH 32
-#define CHUNK_HEIGHT 32
+// *** All of these should be power of 2 ***
+#define CHUNK_DIMENSION 32          // 2^5 = 32
 
-#define WORLD_CHUNK_WIDTH 480
-#define WORLD_CHUNK_HEIGHT 120
+#define WORLD_CHUNK_WIDTH 512       // 2^9 = 512
+#define WORLD_CHUNK_HEIGHT 256      // 2^8 = 256
+// *** ***
 
 #define getChunkRowSolidity(chunk_measurement, i) (((chunk_measurement) >> (i)) & 1)
 
 // Solid block chunk is 32 x 32 bitmap, where 0 means non solid and 1 means solid.
 struct solid_block_chunk {
-    uint32_t data[CHUNK_WIDTH];
+    uint32_t data[CHUNK_DIMENSION];
 
     /*
     *   Returns uint32_t.
@@ -67,7 +68,7 @@ struct solid_world {
             for (int h = 0; h < WORLD_CHUNK_HEIGHT / 2; h++) {
                 solid_block_chunk & block_chunk = world[w][h];
                 uint32_t * block_data = block_chunk.data;
-                for (int j = 0; j < CHUNK_WIDTH; j++) {
+                for (int j = 0; j < CHUNK_DIMENSION; j++) {
                     block_data[j] = UINT32_MAX;
                 }
             }

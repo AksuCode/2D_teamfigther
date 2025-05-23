@@ -50,10 +50,10 @@ void Game::gameLoop() {
 
     // Jotain kivaa.
     MGL_Timing * gamelogic_timer = new MGL_Timing();
-    MGL_SchedulerMs * animation_scheduler = new MGL_SchedulerMs(15);
     //
 
-    game_window_->createOrUpdateWindow(false, 2000, 1000);
+    game_window_->createOrUpdateWindow(false, 2000, 1200);
+    renderer_->Init();
 
     // ECS
     auto main_player_control_system = gCoordinator.RegisterSystem<MainPlayerControlSystem>();
@@ -108,7 +108,9 @@ void Game::gameLoop() {
 
     //
     renderer_->createWorldRender(sw);
+    std::cout << "SUS1" << std::endl;
     renderer_->updateWorldRender();
+    std::cout << "SUS2" << std::endl;
     //
 
     while (true) {
@@ -125,7 +127,6 @@ void Game::gameLoop() {
             // Maybe pass reference to player actions object to gamestate class ro something
             auto current_action = game_action_->getActions(game_eventhandler_->getKeyboardState(), game_eventhandler_->getMouseKeyState());
             std::pair<int, int> current_mouse_position = game_eventhandler_->getMousePosition();
-
             //
 
 
@@ -141,22 +142,23 @@ void Game::gameLoop() {
 
             //
 
-            std::cout << "Game logic" << std::endl;
+            //std::cout << "Game logic" << std::endl;
         }
 
         gamelogic_timer->startFrameRenderTimer();
-        if (animation_scheduler->executeOnSchedule()) {
-            // 5. World state is rendered as image + animations (actions in effect)
-            //world_render_->renderWorld();
-            renderer_->updateWorldRender();
-            renderer_->renderWorld();
-            player_render_system->Render();
-            game_window_->updateWindow();
-            auto res = main_player_position_getter_system->get();
-            std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl; 
-            //
-        }
-        gamelogic_timer->endFrameRenderTimer();
+        //****************************************** */
+        // 5. World state is rendered as image + animations (actions in effect)
+        //world_render_->renderWorld();
+        //renderer_->updateWorldRender();
+        auto res = main_player_position_getter_system->get();
+        std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl;
+        renderer_->updateViewportFocalPointWorldPoint(res);
+        renderer_->renderWorld();
+        player_render_system->Render();
+        game_window_->updateWindow();
+        //
+        //****************************************** */
+        //gamelogic_timer->endFrameRenderTimer();
     }
 
 }
