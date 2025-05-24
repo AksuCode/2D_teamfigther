@@ -15,8 +15,6 @@ void WorldRender::InitAndReconfig() {
 
     texture_ = createChunkTexture();
     if (texture_ == NULL) {exit(-1);}
-
-    viewport_middle_point_ = {gw_->getWindowWidth() / 2, gw_->getWindowHeigth() / 2};
 }
 
 void WorldRender::InitialDraw() {
@@ -65,17 +63,54 @@ void WorldRender::InitialDraw() {
 
 void WorldRender::renderWorld() {
     SDL_Rect src_rect;
-    src_rect.w = viewport_width_;
-    src_rect.h = viewport_height_;
-    src_rect.x = world_point_at_viewport_focal_point_->first;
-    src_rect.y = world_point_at_viewport_focal_point_->second;
+    
+    int src_x = world_point_at_viewport_focal_point_->first;
+    int src_y = world_point_at_viewport_focal_point_->second;
 
     SDL_Rect dst_rect;
-    dst_rect.w = viewport_width_;
-    dst_rect.h = viewport_height_;
-    dst_rect.x = viewport_middle_point_.first - (viewport_width_ / 2);
-    dst_rect.y = viewport_middle_point_.second - (viewport_height_ / 2);
 
+    if (src_x < 0) {
+        src_rect.w = viewport_width_ + src_x;
+        src_rect.x = 0;
+
+        dst_rect.w = viewport_width_ + src_x;
+        dst_rect.x = -src_x;
+    } else if (texture_width_ <= src_x + viewport_width_) {
+        if (texture_width_ <= src_x) {return;}
+        src_rect.w = texture_width_ - src_x;
+        src_rect.x = src_x;
+
+        dst_rect.w = texture_width_ - src_x;
+        dst_rect.x = 0;
+    } else {
+        src_rect.w = viewport_width_;
+        src_rect.x = world_point_at_viewport_focal_point_->first;
+
+        dst_rect.w = viewport_width_;
+        dst_rect.x = 0;
+    }
+
+    if (src_y < 0) {
+        src_rect.h = viewport_height_ + src_y;
+        src_rect.y = 0;
+
+        dst_rect.h = viewport_height_ + src_y;
+        dst_rect.y = -src_y;
+    } else if (texture_height_ <= src_y + viewport_height_) {
+        if (texture_height_ <= src_y) {return;}
+        src_rect.y = texture_height_ - src_y;
+        src_rect.y = src_y;
+
+        dst_rect.h = texture_height_ - src_y;
+        dst_rect.y = 0;
+    } else {
+        src_rect.h = viewport_height_;
+        src_rect.y = world_point_at_viewport_focal_point_->second;
+
+        dst_rect.h = viewport_height_;
+        dst_rect.y = 0;
+    }
+    
     gw_->renderTexture(texture_, &src_rect, &dst_rect);
 }
 

@@ -27,8 +27,6 @@ class WorldRender {
         solid_world * sw_;
         SDL_Texture * texture_;
 
-        std::pair<int, int> viewport_middle_point_;
-
         std::pair<double, double> * world_point_at_viewport_focal_point_;
         std::pair<double, double> previous_world_point_at_viewport_focal_point_; 
 
