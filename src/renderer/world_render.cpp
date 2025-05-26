@@ -23,38 +23,37 @@ void WorldRender::InitialDraw() {
     for (int i = 0; i < WORLD_CHUNK_WIDTH; i++) {
         for (int j = 0; j < WORLD_CHUNK_HEIGHT; j++) {
             uint32_t * data = solid_block_chunk_matrix[i][j].data;
-            for (int k = 0; k < CHUNK_DIMENSION; k++) {
-                Uint32* pixels;
-                int pitch;
+            
+            Uint32* pixels;
+            int pitch;
 
-                SDL_Rect target;
-                target.w = CHUNK_DIMENSION;
-                target.h = CHUNK_DIMENSION;
-                target.x = i * CHUNK_DIMENSION;
-                target.y = j * CHUNK_DIMENSION;
+            SDL_Rect target;
+            target.w = CHUNK_DIMENSION;
+            target.h = CHUNK_DIMENSION;
+            target.x = i * CHUNK_DIMENSION;
+            target.y = (WORLD_CHUNK_HEIGHT - j - 1) * CHUNK_DIMENSION;
 
-                // Assume texture is created with SDL_TEXTUREACCESS_STREAMING
-                if (SDL_LockTexture(texture_, &target, (void**)&pixels, &pitch) != 0) {
-                    exit(-1);
-                }
-
-                // pitch is in bytes, so divide by 4 for 32-bit pixels (Uint32)
-                int width = pitch / 4;
-                for (int w = 0; w < CHUNK_DIMENSION; ++w) {
-                    uint32_t col = data[w];
-                    for (int h = 0; h < CHUNK_DIMENSION; ++h) {
-                        uint32_t mask = 1 << w;
-                        uint32_t bit_value = (col & mask) >> w;
-                        Uint32 pixel = static_cast<Uint32>(0xFF0064FF);
-                        if (bit_value != 0) {
-                            pixel = static_cast<Uint32>(0x00FF00FF);
-                        }
-                        pixels[w * width + h] = pixel;
-                    }
-                }
-
-                SDL_UnlockTexture(texture_);
+            // Assume texture is created with SDL_TEXTUREACCESS_STREAMING
+            if (SDL_LockTexture(texture_, &target, (void**)&pixels, &pitch) != 0) {
+                exit(-1);
             }
+
+            // pitch is in bytes, so divide by 4 for 32-bit pixels (Uint32)
+            int width = pitch / 4;
+            for (int w = 0; w < CHUNK_DIMENSION; ++w) {
+                uint32_t col = data[w];
+                for (int h = 0; h < CHUNK_DIMENSION; ++h) {
+                    uint32_t mask = 1 << h;
+                    uint32_t bit_value = (col & mask) >> h;
+                    Uint32 pixel = static_cast<Uint32>(0xB2FFFFFF);
+                    if (bit_value != 0) {
+                        pixel = static_cast<Uint32>(0x00FF00FF);
+                    }
+                    pixels[w * width + h] = pixel;
+                }
+            }
+
+            SDL_UnlockTexture(texture_);
         }
         std::cout << counter << std::endl;
         counter++;

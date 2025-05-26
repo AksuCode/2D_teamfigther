@@ -65,11 +65,16 @@ struct solid_world {
 
     void worldGenerate() {
         for (int w = 0; w < WORLD_CHUNK_WIDTH; w++) {
-            for (int h = 0; h < WORLD_CHUNK_HEIGHT / 2; h++) {
+            for (int h = 0; h < WORLD_CHUNK_HEIGHT; h++) {
                 solid_block_chunk & block_chunk = world[w][h];
                 uint32_t * block_data = block_chunk.data;
                 for (int j = 0; j < CHUNK_DIMENSION; j++) {
-                    block_data[j] = UINT32_MAX;
+                    block_data[j] = 0;
+                    if (h < WORLD_CHUNK_HEIGHT / 2) {
+                        if (1 < j && j < 30) {
+                            block_data[j] = 0x3FFFFFFC;
+                        }
+                    }
                 }
             }
         }
