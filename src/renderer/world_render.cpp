@@ -19,7 +19,6 @@ void WorldRender::InitAndReconfig() {
 
 void WorldRender::InitialDraw() {
     auto solid_block_chunk_matrix = sw_->world;
-    int counter = 0;
     for (int i = 0; i < WORLD_CHUNK_WIDTH; i++) {
         for (int j = 0; j < WORLD_CHUNK_HEIGHT; j++) {
             uint32_t * data = solid_block_chunk_matrix[i][j].data;
@@ -49,14 +48,12 @@ void WorldRender::InitialDraw() {
                     if (bit_value != 0) {
                         pixel = static_cast<Uint32>(0x00FF00FF);
                     }
-                    pixels[w * width + h] = pixel;
+                    pixels[h * width + w] = pixel;
                 }
             }
 
             SDL_UnlockTexture(texture_);
         }
-        std::cout << counter << std::endl;
-        counter++;
     }
 }
 
@@ -83,28 +80,30 @@ void WorldRender::renderWorld() {
         dst_rect.x = 0;
     } else {
         src_rect.w = viewport_width_;
-        src_rect.x = world_point_at_viewport_focal_point_->first;
+        src_rect.x = src_x;
 
         dst_rect.w = viewport_width_;
         dst_rect.x = 0;
     }
 
-    if (src_y < 0) {
-        src_rect.h = viewport_height_ + src_y;
+    const int flipped_src_y = (WORLD_BLOCK_HEIGHT - src_y);
+
+    if (flipped_src_y < 0) {
+        src_rect.h = viewport_height_ + flipped_src_y;
         src_rect.y = 0;
 
-        dst_rect.h = viewport_height_ + src_y;
-        dst_rect.y = -src_y;
-    } else if (texture_height_ <= src_y + viewport_height_) {
-        if (texture_height_ <= src_y) {return;}
-        src_rect.y = texture_height_ - src_y;
-        src_rect.y = src_y;
+        dst_rect.h = viewport_height_ + flipped_src_y;
+        dst_rect.y = -flipped_src_y;
+    } else if (texture_height_ <= flipped_src_y + viewport_height_) {
+        if (texture_height_ <= flipped_src_y) {return;}
+        src_rect.y = texture_height_ - flipped_src_y;
+        src_rect.y = flipped_src_y;
 
-        dst_rect.h = texture_height_ - src_y;
+        dst_rect.h = texture_height_ - flipped_src_y;
         dst_rect.y = 0;
     } else {
         src_rect.h = viewport_height_;
-        src_rect.y = world_point_at_viewport_focal_point_->second;
+        src_rect.y = flipped_src_y;
 
         dst_rect.h = viewport_height_;
         dst_rect.y = 0;

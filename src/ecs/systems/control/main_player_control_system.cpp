@@ -23,10 +23,10 @@ void MainPlayerControlSystem::Update(const std::array<bool, (int)ActionCode::ACT
 	}
 
 	if (actions[ActionCode::UP]) {
-		motion.position.second -= 10;
+		motion.position.second += 10;
 	}
 
 	if (actions[ActionCode::DOWN]) {
-		motion.position.second += 10;
+		motion.position.second -= 10;
 	}
 }

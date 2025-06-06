@@ -115,7 +115,7 @@ int GameWindow::renderTextureF(SDL_Texture * texture,
 int GameWindow::renderTextureExF(SDL_Texture * texture,
                   const SDL_Rect * src_rect,
                   const SDL_FRect * dst_rect,
-                  const double angle,
+                  double angle,
                   const SDL_FPoint *center,
                   const SDL_RendererFlip flip) {
   return SDL_RenderCopyExF(renderer_, texture, src_rect, dst_rect, angle, center, flip);

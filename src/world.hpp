@@ -8,21 +8,22 @@
 // *** All of these should be power of 2 ***
 #define CHUNK_DIMENSION 32          // 2^5 = 32
 
-#define WORLD_CHUNK_WIDTH 512       // 2^9 = 512
-#define WORLD_CHUNK_HEIGHT 256      // 2^8 = 256
+#define BATCH_DIMENSION 64          // 2^6 = 64
+
+#define WORLD_BATCH_WIDTH 8
+#define WORLD_BATCH_HEIGHT 4
+
+#define WORLD_CHUNK_WIDTH 512
+#define WORLD_CHUNK_HEIGHT 256
+
+#define WORLD_BLOCK_HEIGHT (CHUNK_DIMENSION * WORLD_CHUNK_HEIGHT)
 // *** ***
 
 #define getChunkRowSolidity(chunk_measurement, i) (((chunk_measurement) >> (i)) & 1)
 
-// Solid block chunk is 32 x 32 bitmap, where 0 means non solid and 1 means solid.
 struct solid_block_chunk {
     uint32_t data[CHUNK_DIMENSION];
 
-    /*
-    *   Returns uint32_t.
-    *       - From the uint32_t value we KNOW that this chunk is completely NON SOLID if RETURN VALUE == 0.
-    *       - Each bit in the return value represents the solidity of a ROW in the chunk. Use getChunkRowSolidity(chunk_measurement, i) on the return value.
-    */
     uint32_t measureChunkSolidity() {
         uint32_t s0 = 0;
         uint32_t s1 = 0;
@@ -59,7 +60,6 @@ struct solid_block_chunk {
 
 };
 
-// For now lets load the entire world to memory:
 struct solid_world {
     solid_block_chunk world[WORLD_CHUNK_WIDTH][WORLD_CHUNK_HEIGHT];
 
@@ -78,13 +78,15 @@ struct solid_world {
                 }
             }
         }
+
+        world[0][255].data[31] = 0xFFFFFF0F;
+
     }
 
 };
 
-// Block type chunk is 32 x 32 bytemap, where a byte is an id of the type of block. So there is a limit of 256 block types.
 struct block_type_chunk {
-    uint8_t data[32][32];
+    uint16_t data[32][32];
 };
 
 struct type_world {

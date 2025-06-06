@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <utility>
+#include <chrono>
 
 #include <SDL2/SDL.h>
 
