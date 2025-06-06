@@ -113,6 +113,11 @@ void Game::gameLoop() {
     std::cout << "SUS2" << std::endl;
     //
 
+    //fps timer:
+    auto fps_timer_begin = std::chrono::steady_clock::now();
+    int fps_counter = 0;
+    //
+
     while (true) {
 
         if (gamelogic_timer->computeNextLogic()) {
@@ -151,14 +156,23 @@ void Game::gameLoop() {
         //world_render_->renderWorld();
         //renderer_->updateWorldRender();
         auto res = main_player_position_getter_system->get();
-        std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl;
+        //std::cout << "Movement tester: (x: " << res.first << ", y: " << res.second << ")" << std::endl;
         renderer_->updateViewportFocalPointWorldPoint(res);
         renderer_->renderWorld();
         player_render_system->Render();
         game_window_->updateWindow();
         //
         //****************************************** */
-        //gamelogic_timer->endFrameRenderTimer();
+        const auto elapsed = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - fps_timer_begin)).count();
+        if (elapsed > 1000) {
+            std::cout << "FPS: " << fps_counter << std::endl;
+            fps_counter = 0;
+            fps_timer_begin = std::chrono::steady_clock::now();
+        } else {
+            fps_counter++;
+        }
+
+        gamelogic_timer->endFrameRenderTimer();
     }
 
 }

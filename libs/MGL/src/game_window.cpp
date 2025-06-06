@@ -54,7 +54,7 @@ void GameWindow::createWindow(int width, int heigth, uint32_t flags) {
 }
 
 void GameWindow::createRenderer(SDL_Window * window_ptr) {
-  renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+  renderer_ = SDL_CreateRenderer(window_ptr, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC ?
   if (renderer_ != NULL) { return; }
   SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create a renderer: %s\n", SDL_GetError());
 
